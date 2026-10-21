@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard interativo com o clima das cidades de Rondônia e uma lista de tarefas.">
+  <title>Dashboard de Clima de Rondônia</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!--
+    CONTRATO DO GRUPO (leia antes de editar)
+    - Cada pessoa mexe só no seu arquivo: css/style.css, js/theme.js, js/todo.js, js/api.js.
+    - Precisa de um ID novo ou de mudar este index.html? Combine com o líder antes, para evitar conflito.
+    - Os IDs abaixo são o contrato entre HTML, CSS e JS. Não renomeie sem avisar o grupo.
+    - Tema escuro = classe "dark-mode" no <body>.
+    - localStorage: chave "tarefas" (lista de tarefas) e chave "tema" (claro ou escuro).
+    - Nomes de arquivo em minúsculas e caminhos relativos, como css/style.css (sem barra no início).
+    - Cada arquivo JS fica dentro de uma função (IIFE), para os nomes de variáveis não colidirem.
+  -->
+
+  <header class="topbar">
+    <h1>Dashboard de Clima de Rondônia</h1>
+    <!-- Dono: Dev UI/UX (js/theme.js). Alterna a classe dark-mode no body. -->
+    <button id="theme-toggle" class="btn" type="button" aria-pressed="false">Tema escuro</button>
+  </header>
+
+  <main class="grid">
+
+    <!-- ===== CLIMA | Dono: Dev de API (js/api.js) ===== -->
+    <section id="weather" class="card" aria-labelledby="weather-title">
+      <h2 id="weather-title">Clima</h2>
+      <label for="city-select">Cidade</label>
+      <select id="city-select"></select>
+      <!-- Mensagens de carregando e de erro -->
+      <p id="weather-status" role="status" aria-live="polite"></p>
+      <!-- Temperatura atual, umidade, vento -->
+      <div id="weather-current"></div>
+      <!-- Previsão dos próximos dias -->
+      <div id="weather-forecast"></div>
+    </section>
+
+    <!-- ===== TAREFAS | Dono: Dev To-Do (js/todo.js) ===== -->
+    <section id="tasks" class="card" aria-labelledby="tasks-title">
+      <h2 id="tasks-title">Tarefas</h2>
+      <form id="task-form">
+        <label for="task-input">Nova tarefa</label>
+        <input id="task-input" type="text" autocomplete="off" required>
+        <button class="btn" type="submit">Adicionar tarefa</button>
+      </form>
+      <ul id="task-list"></ul>
+    </section>
+
+  </main>
+
+  
+
+  <noscript>Este painel precisa de JavaScript para funcionar.</noscript>
+
+  <script src="js/theme.js" defer></script>
+  <script src="js/todo.js" defer></script>
+  <script src="js/api.js" defer></script>
+</body>
+</html>

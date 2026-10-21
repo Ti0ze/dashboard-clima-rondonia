@@ -1,0 +1,121 @@
+/* Responsável: Dev UI/UX.
+   Ponto de partida: variáveis de cor e fonte, tema escuro e layout em grade.
+   Tema escuro = classe "dark-mode" no body (ativada por js/theme.js).
+   Ao mudar as cores, confira o contraste: o QA vai testar. */
+
+:root {
+  --bg: #f3f5f1;
+  --surface: #ffffff;
+  --text: #17231c;
+  --muted: #55645a;
+  --primary: #1f6f4a;
+  --on-primary: #ffffff;
+  --border: #d3dbd4;
+  --radius: 10px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body.dark-mode {
+  --bg: #0f1713;
+  --surface: #17221c;
+  --text: #e6efe9;
+  --muted: #9fb2a6;
+  --primary: #5fc08a;
+  --on-primary: #0a1410;
+  --border: #2a3a31;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.125rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--muted);
+}
+
+input,
+select {
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--muted);
+  border-radius: 6px;
+}
+
+.btn {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+#task-form {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer {
+  padding: 1rem 1.5rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.footer p {
+  margin: 0.25rem 0;
+}

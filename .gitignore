@@ -1,0 +1,7 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Segredos: nunca envie chaves de API para o repositório
+.env
+config.local.js
