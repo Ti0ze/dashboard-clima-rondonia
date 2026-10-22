@@ -3,63 +3,545 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Dashboard interativo com o clima das cidades de Rondônia e uma lista de tarefas.">
-  <title>Dashboard de Clima de Rondônia</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Dashboard de Gestão — Alameda Automóveis</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="js/autenticacao.js" defer></script>
+  <script src="js/dashboard.js" defer></script>
+  <script src="js/vendas.js" defer></script>
+  <script src="js/tarefas.js" defer></script>
+  <script src="js/clima.js" defer></script>
+  <script src="js/clientes.js" defer></script>
+  <script src="js/financeiro.js" defer></script>
 </head>
-<body>
+<body id="topo">
 
-  <!--
-    CONTRATO DO GRUPO (leia antes de editar)
-    - Cada pessoa mexe só no seu arquivo: css/style.css, js/theme.js, js/todo.js, js/api.js.
-    - Precisa de um ID novo ou de mudar este index.html? Combine com o líder antes, para evitar conflito.
-    - Os IDs abaixo são o contrato entre HTML, CSS e JS. Não renomeie sem avisar o grupo.
-    - Tema escuro = classe "dark-mode" no <body>.
-    - localStorage: chave "tarefas" (lista de tarefas) e chave "tema" (claro ou escuro).
-    - Nomes de arquivo em minúsculas e caminhos relativos, como css/style.css (sem barra no início).
-    - Cada arquivo JS fica dentro de uma função (IIFE), para os nomes de variáveis não colidirem.
-  -->
+  <a class="link-pular" href="#area-acesso">Pular para o conteúdo principal</a>
 
-  <header class="topbar">
-    <h1>Dashboard de clima e produtividade </h1>
-    <!-- Dono: Dev UI/UX (js/theme.js). Alterna a classe dark-mode no body. -->
-    <button id="theme-toggle" class="btn" type="button" aria-pressed="false">Tema escuro</button>
+  <!-- ===== CABEÇALHO ===== -->
+  <header id="cabecalho" class="cabecalho">
+    <div class="cabecalho-marca">
+      <a class="logo" href="marketplace-carros.html" aria-label="Alameda Automóveis — voltar ao site de veículos">Alameda Automóveis</a>
+      <h1 class="cabecalho-titulo">Dashboard de Gestão</h1>
+    </div>
+
+    <nav id="menu-principal" class="menu" aria-label="Navegação principal">
+      <ul class="menu-lista">
+        <li><a href="#vendas">Vendas</a></li>
+        <li><a href="#tarefas">Tarefas</a></li>
+        <li><a href="#clima">Clima</a></li>
+        <li><a href="#clientes">Clientes</a></li>
+        <li><a href="#financeiro">Financeiro</a></li>
+        <li><a href="marketplace-carros.html">Voltar ao site de veículos</a></li>
+      </ul>
+    </nav>
+
+    <div id="cabecalho-acoes" class="cabecalho-acoes">
+      <button type="button" id="botao-tema" class="botao botao-tema" aria-pressed="false" aria-label="Alternar entre tema claro e escuro">Alternar tema</button>
+      <p class="cabecalho-info">
+        <time id="data-atual" datetime="">Data atual (exemplo)</time>
+        <span id="nome-usuario">Usuário Demonstração</span>
+      </p>
+      <button type="button" id="botao-sair" class="botao">Sair</button>
+    </div>
   </header>
 
-  <main class="grid">
+  <!-- ===== ÁREA DE ENTRADA (LOGIN) ===== -->
+  <main id="area-acesso" class="acesso">
+    <section id="login" class="acesso-secao" aria-labelledby="titulo-login">
+      <h2 id="titulo-login">Acesso à área de trabalho</h2>
+      <p class="secao-descricao">Informe suas credenciais para acessar o Dashboard de Gestão.</p>
 
-    <!-- ===== CLIMA | Dono: Dev de API (js/api.js) ===== -->
-    <section id="weather" class="card" aria-labelledby="weather-title">
-      <h2 id="weather-title">Clima</h2>
-      <label for="city-select">Cidade</label>
-      <select id="city-select"></select>
-      <!-- Mensagens de carregando e de erro -->
-      <p id="weather-status" role="status" aria-live="polite"></p>
-      <!-- Temperatura atual, umidade, vento -->
-      <div id="weather-current"></div>
-      <!-- Previsão dos próximos dias -->
-      <div id="weather-forecast"></div>
+      <form id="form-login" class="formulario" aria-labelledby="titulo-login" novalidate>
+        <div class="campo">
+          <label for="login-usuario">Usuário ou e-mail</label>
+          <input type="text" id="login-usuario" name="usuario" autocomplete="username" required>
+        </div>
+        <div class="campo">
+          <label for="login-senha">Senha</label>
+          <input type="password" id="login-senha" name="senha" autocomplete="current-password" required>
+          <button type="button" id="botao-mostrar-senha" class="botao" aria-pressed="false" aria-controls="login-senha">Mostrar senha</button>
+        </div>
+        <div class="campo campo-opcao">
+          <input type="checkbox" id="login-lembrar" name="lembrar">
+          <label for="login-lembrar">Manter conectado</label>
+        </div>
+
+        <p id="login-erro" class="mensagem mensagem-erro" role="alert" hidden></p>
+        <p id="login-carregando" class="mensagem" role="status" hidden>Verificando acesso...</p>
+
+        <button type="submit" id="botao-entrar" class="botao botao-primario">Entrar</button>
+        <button type="button" id="botao-esqueci-senha" class="botao">Esqueci minha senha</button>
+      </form>
+
+      <p class="acesso-voltar"><a href="marketplace-carros.html">Voltar ao site de veículos</a></p>
+    </section>
+  </main>
+
+  <!-- ===== ÁREA DE TRABALHO (visível somente após o login) ===== -->
+  <main id="conteudo-principal" class="principal">
+
+    <!-- ===== MENU DE ATALHOS (cartões) ===== -->
+    <nav id="menu-cartoes" class="menu-cartoes" aria-labelledby="titulo-menu-cartoes">
+      <h2 id="titulo-menu-cartoes" class="somente-leitor-tela">Ir direto para uma seção</h2>
+      <ul class="menu-cartoes-lista">
+        <li><a class="cartao-atalho" href="#vendas"><span class="cartao-atalho-titulo">Vendas</span><span class="cartao-atalho-descricao">Faturamento, meta e vendas recentes</span></a></li>
+        <li><a class="cartao-atalho" href="#tarefas"><span class="cartao-atalho-titulo">Tarefas</span><span class="cartao-atalho-descricao">Prioridades, prazos e produtividade</span></a></li>
+        <li><a class="cartao-atalho" href="#clima"><span class="cartao-atalho-titulo">Clima</span><span class="cartao-atalho-descricao">Previsão do tempo</span></a></li>
+        <li><a class="cartao-atalho" href="#clientes"><span class="cartao-atalho-titulo">Clientes</span><span class="cartao-atalho-descricao">Contatos, negociações e test drives</span></a></li>
+        <li><a class="cartao-atalho" href="#financeiro"><span class="cartao-atalho-titulo">Financeiro</span><span class="cartao-atalho-descricao">Receitas, despesas, calculadora e câmbio</span></a></li>
+      </ul>
+    </nav>
+
+    <!-- ===== SEÇÃO 1: PAINEL DE VENDAS ===== -->
+    <section id="vendas" class="secao" aria-labelledby="titulo-vendas">
+      <header class="secao-cabecalho">
+        <h2 id="titulo-vendas">Painel de vendas</h2>
+        <p class="secao-descricao">Acompanhe o desempenho de vendas do mês.</p>
+        <a class="link-voltar-menu" href="#menu-cartoes">Voltar ao menu de seções</a>
+      </header>
+
+      <div class="grade-cartoes">
+        <article class="cartao" aria-labelledby="rotulo-total-vendidos">
+          <h3 id="rotulo-total-vendidos" class="cartao-titulo">Carros vendidos</h3>
+          <p id="vendas-total-vendidos" class="cartao-valor" aria-live="polite">--</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-faturamento">
+          <h3 id="rotulo-faturamento" class="cartao-titulo">Faturamento mensal</h3>
+          <p id="vendas-faturamento-mensal" class="cartao-valor" aria-live="polite">--</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-meta">
+          <h3 id="rotulo-meta" class="cartao-titulo">Meta mensal de vendas</h3>
+          <p class="cartao-valor">
+            <span id="vendas-meta-realizado">--</span> de <span id="vendas-meta-total">--</span>
+          </p>
+          <progress id="vendas-meta-progresso" class="barra-progresso" value="0" max="100" aria-labelledby="rotulo-meta">0%</progress>
+          <p id="vendas-meta-percentual" class="cartao-nota" aria-live="polite">--</p>
+        </article>
+      </div>
+
+      <div class="grade-duas-colunas">
+        <article class="bloco" aria-labelledby="titulo-mais-vendidos">
+          <h3 id="titulo-mais-vendidos">Modelos mais vendidos</h3>
+          <ol id="vendas-modelos-mais-vendidos" class="lista-ranking">
+            <li class="item-vazio">Nenhum dado carregado.</li>
+          </ol>
+        </article>
+        <article class="bloco" aria-labelledby="titulo-grafico-vendas">
+          <h3 id="titulo-grafico-vendas">Vendas por mês</h3>
+          <div id="vendas-grafico" class="grafico" role="img" aria-label="Gráfico de vendas por mês"></div>
+        </article>
+      </div>
+
+      <article class="bloco" aria-labelledby="titulo-vendas-recentes">
+        <h3 id="titulo-vendas-recentes">Vendas recentes</h3>
+        <div class="tabela-rolagem">
+          <table id="tabela-vendas-recentes" class="tabela">
+            <caption class="somente-leitor-tela">Lista das vendas mais recentes</caption>
+            <thead>
+              <tr>
+                <th scope="col">Veículo</th>
+                <th scope="col">Data</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody id="vendas-recentes-corpo">
+              <tr class="linha-vazia"><td colspan="4">Nenhuma venda carregada.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
     </section>
 
-    <!-- ===== TAREFAS | Dono: Dev To-Do (js/todo.js) ===== -->
-    <section id="tasks" class="card" aria-labelledby="tasks-title">
-      <h2 id="tasks-title">Tarefas</h2>
-      <form id="task-form">
-        <label for="task-input">Nova tarefa</label>
-        <input id="task-input" type="text" autocomplete="off" required>
-        <button class="btn" type="submit">Adicionar tarefa</button>
-      </form>
-      <ul id="task-list"></ul>
+    <!-- ===== SEÇÃO 2: GERENCIADOR DE TAREFAS ===== -->
+    <section id="tarefas" class="secao" aria-labelledby="titulo-tarefas">
+      <header class="secao-cabecalho">
+        <h2 id="titulo-tarefas">Gerenciador de tarefas</h2>
+        <p class="secao-descricao">Organize as atividades da equipe por prioridade e prazo.</p>
+        <a class="link-voltar-menu" href="#menu-cartoes">Voltar ao menu de seções</a>
+      </header>
+
+      <div class="grade-cartoes">
+        <article class="cartao" aria-labelledby="rotulo-tarefas-total">
+          <h3 id="rotulo-tarefas-total" class="cartao-titulo">Total de tarefas</h3>
+          <p id="tarefas-total" class="cartao-valor" aria-live="polite">0</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-tarefas-pendentes">
+          <h3 id="rotulo-tarefas-pendentes" class="cartao-titulo">Pendentes</h3>
+          <p id="tarefas-pendentes" class="cartao-valor" aria-live="polite">0</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-tarefas-concluidas">
+          <h3 id="rotulo-tarefas-concluidas" class="cartao-titulo">Concluídas</h3>
+          <p id="tarefas-concluidas" class="cartao-valor" aria-live="polite">0</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-produtividade">
+          <h3 id="rotulo-produtividade" class="cartao-titulo">Produtividade diária</h3>
+          <p id="tarefas-produtividade-percentual" class="cartao-valor" aria-live="polite">--</p>
+          <progress id="tarefas-produtividade-progresso" class="barra-progresso" value="0" max="100" aria-labelledby="rotulo-produtividade">0%</progress>
+        </article>
+      </div>
+
+      <div class="grade-duas-colunas">
+        <form id="form-tarefa" class="formulario" aria-labelledby="titulo-form-tarefa">
+          <h3 id="titulo-form-tarefa">Nova tarefa</h3>
+          <div class="campo">
+            <label for="tarefa-titulo">Título ou descrição</label>
+            <input type="text" id="tarefa-titulo" name="titulo" required>
+          </div>
+          <div class="campo">
+            <label for="tarefa-prioridade">Prioridade</label>
+            <select id="tarefa-prioridade" name="prioridade" required>
+              <option value="baixa">Baixa</option>
+              <option value="media" selected>Média</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="tarefa-prazo">Prazo</label>
+            <input type="date" id="tarefa-prazo" name="prazo">
+          </div>
+          <button type="submit" id="botao-adicionar-tarefa" class="botao botao-primario">Adicionar tarefa</button>
+        </form>
+
+        <article class="bloco" aria-labelledby="titulo-lista-tarefas">
+          <h3 id="titulo-lista-tarefas">Lista de tarefas</h3>
+          <div class="campo">
+            <label for="tarefas-filtro">Exibir</label>
+            <select id="tarefas-filtro" name="filtro">
+              <option value="todas" selected>Todas as tarefas</option>
+              <option value="pendentes">Somente pendentes</option>
+            </select>
+          </div>
+          <ul id="lista-tarefas" class="lista-tarefas" aria-live="polite">
+            <li class="item-vazio" id="tarefas-mensagem-vazia">Nenhuma tarefa cadastrada.</li>
+          </ul>
+
+          <!-- Modelo de item: o JavaScript clona este template para cada tarefa -->
+          <template id="modelo-tarefa">
+            <li class="tarefa" data-id="" data-status="pendente">
+              <span class="tarefa-titulo"></span>
+              <span class="tarefa-prioridade"></span>
+              <time class="tarefa-prazo"></time>
+              <button type="button" class="botao botao-concluir-tarefa">Concluir</button>
+              <button type="button" class="botao botao-excluir-tarefa">Excluir</button>
+            </li>
+          </template>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== SEÇÃO 3: PREVISÃO DO TEMPO ===== -->
+    <section id="clima" class="secao" aria-labelledby="titulo-clima">
+      <header class="secao-cabecalho">
+        <h2 id="titulo-clima">Previsão do tempo</h2>
+        <p class="secao-descricao">Condições climáticas para planejar test drives e entregas.</p>
+        <a class="link-voltar-menu" href="#menu-cartoes">Voltar ao menu de seções</a>
+      </header>
+
+      <div class="grade-duas-colunas">
+        <article class="bloco" aria-labelledby="titulo-clima-atual">
+          <h3 id="titulo-clima-atual">Agora em <span id="clima-cidade">Porto Velho - RO</span></h3>
+          <div id="clima-icone-atual" class="icone-clima" role="img" aria-label="Ícone da condição climática atual"></div>
+          <p id="clima-temperatura" class="cartao-valor" aria-live="polite">--</p>
+          <dl class="lista-dados">
+            <dt>Condição</dt>
+            <dd id="clima-condicao">--</dd>
+            <dt>Probabilidade de chuva</dt>
+            <dd id="clima-chuva">--</dd>
+            <dt>Umidade relativa</dt>
+            <dd id="clima-umidade">--</dd>
+          </dl>
+          <button type="button" id="botao-atualizar-clima" class="botao botao-primario">Atualizar previsão</button>
+          <p id="clima-carregando" class="mensagem" role="status" hidden>Carregando previsão...</p>
+          <p id="clima-erro" class="mensagem mensagem-erro" role="alert" hidden></p>
+        </article>
+
+        <article class="bloco" aria-labelledby="titulo-clima-proximos">
+          <h3 id="titulo-clima-proximos">Próximos dias</h3>
+          <ul id="clima-previsao-dias" class="lista-previsao">
+            <li class="item-vazio">Previsão ainda não carregada.</li>
+          </ul>
+          <template id="modelo-dia-clima">
+            <li class="previsao-dia">
+              <span class="previsao-dia-nome"></span>
+              <span class="icone-clima previsao-dia-icone"></span>
+              <span class="previsao-dia-minima"></span>
+              <span class="previsao-dia-maxima"></span>
+            </li>
+          </template>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== SEÇÃO 4: CLIENTES INTERESSADOS ===== -->
+    <section id="clientes" class="secao" aria-labelledby="titulo-clientes">
+      <header class="secao-cabecalho">
+        <h2 id="titulo-clientes">Controle de clientes interessados</h2>
+        <p class="secao-descricao">Registre contatos, negociações e compromissos. Os dados exibidos são apenas exemplos.</p>
+        <a class="link-voltar-menu" href="#menu-cartoes">Voltar ao menu de seções</a>
+      </header>
+
+      <div class="grade-cartoes">
+        <article class="cartao" aria-labelledby="rotulo-novos-contatos">
+          <h3 id="rotulo-novos-contatos" class="cartao-titulo">Novos contatos</h3>
+          <p id="clientes-novos-contatos" class="cartao-valor" aria-live="polite">0</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-negociacoes">
+          <h3 id="rotulo-negociacoes" class="cartao-titulo">Negociações em andamento</h3>
+          <p id="clientes-negociacoes" class="cartao-valor" aria-live="polite">0</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-retorno">
+          <h3 id="rotulo-retorno" class="cartao-titulo">Precisam de retorno</h3>
+          <p id="clientes-retorno" class="cartao-valor" aria-live="polite">0</p>
+        </article>
+      </div>
+
+      <div class="grade-duas-colunas">
+        <form id="form-cliente" class="formulario" aria-labelledby="titulo-form-cliente">
+          <h3 id="titulo-form-cliente">Cadastrar cliente interessado</h3>
+          <input type="hidden" id="cliente-id" name="id">
+          <div class="campo">
+            <label for="cliente-nome">Nome</label>
+            <input type="text" id="cliente-nome" name="nome" required>
+          </div>
+          <div class="campo">
+            <label for="cliente-telefone">Telefone</label>
+            <input type="tel" id="cliente-telefone" name="telefone" required>
+          </div>
+          <div class="campo">
+            <label for="cliente-veiculo">Veículo de interesse</label>
+            <input type="text" id="cliente-veiculo" name="veiculo">
+          </div>
+          <div class="campo">
+            <label for="cliente-proximo-contato">Data do próximo contato</label>
+            <input type="date" id="cliente-proximo-contato" name="proximoContato">
+          </div>
+          <div class="campo">
+            <label for="cliente-status">Status da negociação</label>
+            <select id="cliente-status" name="status" required>
+              <option value="novo-contato" selected>Novo contato</option>
+              <option value="em-negociacao">Em negociação</option>
+              <option value="vendido">Vendido</option>
+              <option value="perdido">Perdido</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="cliente-observacoes">Observações</label>
+            <textarea id="cliente-observacoes" name="observacoes" rows="3"></textarea>
+          </div>
+          <button type="submit" id="botao-salvar-cliente" class="botao botao-primario">Salvar cliente</button>
+          <button type="reset" id="botao-limpar-cliente" class="botao">Limpar</button>
+        </form>
+
+        <article class="bloco" aria-labelledby="titulo-agenda">
+          <h3 id="titulo-agenda">Agenda de compromissos e test drives</h3>
+          <div id="clientes-calendario" class="calendario" aria-label="Calendário de compromissos"></div>
+          <ul id="clientes-compromissos" class="lista-compromissos" aria-live="polite">
+            <li class="item-vazio">Nenhum compromisso agendado.</li>
+          </ul>
+        </article>
+      </div>
+
+      <article class="bloco" aria-labelledby="titulo-lista-clientes">
+        <h3 id="titulo-lista-clientes">Clientes cadastrados</h3>
+        <div class="tabela-rolagem">
+          <table id="tabela-clientes" class="tabela">
+            <caption class="somente-leitor-tela">Clientes interessados e status das negociações</caption>
+            <thead>
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Telefone</th>
+                <th scope="col">Veículo de interesse</th>
+                <th scope="col">Próximo contato</th>
+                <th scope="col">Status</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="clientes-corpo">
+              <!-- Linha de exemplo, identificada como demonstrativa -->
+              <tr class="linha-exemplo" data-id="exemplo-1">
+                <td>Cliente Exemplo (demonstrativo)</td>
+                <td>(00) 00000-0000</td>
+                <td>Veículo de exemplo</td>
+                <td><time datetime="">--</time></td>
+                <td>
+                  <label class="somente-leitor-tela" for="status-exemplo-1">Alterar status</label>
+                  <select id="status-exemplo-1" class="seletor-status-cliente">
+                    <option value="novo-contato" selected>Novo contato</option>
+                    <option value="em-negociacao">Em negociação</option>
+                    <option value="vendido">Vendido</option>
+                    <option value="perdido">Perdido</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" class="botao botao-editar-cliente">Editar</button>
+                  <button type="button" class="botao botao-historico-cliente">Ver histórico</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside id="clientes-historico" class="bloco" aria-labelledby="titulo-historico" aria-live="polite">
+        <h3 id="titulo-historico">Histórico e próximas ações</h3>
+        <p id="clientes-historico-vazio">Selecione um cliente para ver o histórico.</p>
+        <ul id="clientes-historico-lista"></ul>
+      </aside>
+    </section>
+
+    <!-- ===== SEÇÃO 5: INDICADORES FINANCEIROS ===== -->
+    <section id="financeiro" class="secao" aria-labelledby="titulo-financeiro">
+      <header class="secao-cabecalho">
+        <h2 id="titulo-financeiro">Indicadores financeiros</h2>
+        <p class="secao-descricao">Receitas, despesas, lucro e ferramentas de cálculo.</p>
+        <a class="link-voltar-menu" href="#menu-cartoes">Voltar ao menu de seções</a>
+      </header>
+
+      <div class="grade-cartoes">
+        <article class="cartao" aria-labelledby="rotulo-receitas">
+          <h3 id="rotulo-receitas" class="cartao-titulo">Receitas</h3>
+          <p id="financeiro-receitas" class="cartao-valor" aria-live="polite">--</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-despesas">
+          <h3 id="rotulo-despesas" class="cartao-titulo">Despesas</h3>
+          <p id="financeiro-despesas" class="cartao-valor" aria-live="polite">--</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-lucro">
+          <h3 id="rotulo-lucro" class="cartao-titulo">Lucro estimado</h3>
+          <p id="financeiro-lucro" class="cartao-valor" aria-live="polite">--</p>
+        </article>
+        <article class="cartao" aria-labelledby="rotulo-ticket">
+          <h3 id="rotulo-ticket" class="cartao-titulo">Valor médio das vendas</h3>
+          <p id="financeiro-valor-medio" class="cartao-valor" aria-live="polite">--</p>
+        </article>
+      </div>
+
+      <div class="grade-duas-colunas">
+        <form id="form-movimentacao" class="formulario" aria-labelledby="titulo-form-movimentacao">
+          <h3 id="titulo-form-movimentacao">Registrar movimentação</h3>
+          <div class="campo">
+            <label for="movimentacao-descricao">Descrição</label>
+            <input type="text" id="movimentacao-descricao" name="descricao" required>
+          </div>
+          <div class="campo">
+            <label for="movimentacao-valor">Valor (R$)</label>
+            <input type="number" id="movimentacao-valor" name="valor" min="0" step="0.01" required>
+          </div>
+          <div class="campo">
+            <label for="movimentacao-tipo">Tipo</label>
+            <select id="movimentacao-tipo" name="tipo" required>
+              <option value="receita" selected>Receita</option>
+              <option value="despesa">Despesa</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="movimentacao-categoria">Categoria</label>
+            <input type="text" id="movimentacao-categoria" name="categoria">
+          </div>
+          <div class="campo">
+            <label for="movimentacao-data">Data</label>
+            <input type="date" id="movimentacao-data" name="data" required>
+          </div>
+          <button type="submit" id="botao-registrar-movimentacao" class="botao botao-primario">Registrar</button>
+        </form>
+
+        <article class="bloco" aria-labelledby="titulo-graficos-financeiros">
+          <h3 id="titulo-graficos-financeiros">Receitas, despesas e lucro</h3>
+          <div id="financeiro-grafico" class="grafico" role="img" aria-label="Gráfico de receitas, despesas e lucro"></div>
+        </article>
+      </div>
+
+      <article class="bloco" aria-labelledby="titulo-historico-financeiro">
+        <h3 id="titulo-historico-financeiro">Histórico de movimentações</h3>
+        <div class="tabela-rolagem">
+          <table id="tabela-movimentacoes" class="tabela">
+            <caption class="somente-leitor-tela">Histórico de receitas e despesas</caption>
+            <thead>
+              <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody id="financeiro-movimentacoes-corpo">
+              <tr class="linha-vazia"><td colspan="5">Nenhuma movimentação registrada.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <div class="grade-duas-colunas">
+        <!-- Calculadora -->
+        <article id="calculadora" class="bloco" aria-labelledby="titulo-calculadora">
+          <h3 id="titulo-calculadora">Calculadora</h3>
+          <div class="campo">
+            <label for="calculadora-valor-a">Primeiro valor</label>
+            <input type="number" id="calculadora-valor-a" step="any">
+          </div>
+          <div class="campo">
+            <label for="calculadora-valor-b">Segundo valor</label>
+            <input type="number" id="calculadora-valor-b" step="any">
+          </div>
+          <div class="grupo-botoes" role="group" aria-label="Operações">
+            <button type="button" class="botao botao-operacao" data-operacao="somar" aria-label="Somar">+</button>
+            <button type="button" class="botao botao-operacao" data-operacao="subtrair" aria-label="Subtrair">−</button>
+            <button type="button" class="botao botao-operacao" data-operacao="multiplicar" aria-label="Multiplicar">×</button>
+            <button type="button" class="botao botao-operacao" data-operacao="dividir" aria-label="Dividir">÷</button>
+            <button type="button" id="botao-limpar-calculadora" class="botao">Limpar</button>
+          </div>
+          <p>Resultado: <output id="calculadora-resultado" for="calculadora-valor-a calculadora-valor-b" aria-live="polite">--</output></p>
+        </article>
+
+        <!-- Conversor de moedas -->
+        <article id="conversor" class="bloco" aria-labelledby="titulo-conversor">
+          <h3 id="titulo-conversor">Conversor de moedas</h3>
+          <div class="campo">
+            <label for="conversor-valor">Valor a converter</label>
+            <input type="number" id="conversor-valor" min="0" step="any">
+          </div>
+          <div class="campo">
+            <label for="conversor-origem">Moeda de origem</label>
+            <select id="conversor-origem">
+              <option value="BRL" selected>Real brasileiro (BRL)</option>
+              <option value="USD">Dólar americano (USD)</option>
+              <option value="EUR">Euro (EUR)</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="conversor-destino">Moeda de destino</label>
+            <select id="conversor-destino">
+              <option value="BRL">Real brasileiro (BRL)</option>
+              <option value="USD" selected>Dólar americano (USD)</option>
+              <option value="EUR">Euro (EUR)</option>
+            </select>
+          </div>
+          <button type="button" id="botao-atualizar-cotacao" class="botao botao-primario">Atualizar cotação</button>
+          <dl class="lista-dados" aria-live="polite">
+            <dt>Cotação utilizada</dt>
+            <dd id="conversor-cotacao">--</dd>
+            <dt>Resultado</dt>
+            <dd id="conversor-resultado">--</dd>
+            <dt>Última atualização</dt>
+            <dd id="conversor-atualizacao">--</dd>
+          </dl>
+          <p id="conversor-carregando" class="mensagem" role="status" hidden>Consultando cotação...</p>
+          <p id="conversor-erro" class="mensagem mensagem-erro" role="alert" hidden></p>
+        </article>
+      </div>
     </section>
 
   </main>
 
-  
+  <!-- ===== RODAPÉ ===== -->
+  <footer id="rodape" class="rodape">
+    <p class="rodape-nome">Alameda Automóveis</p>
+    <p>Dashboard Interativo de Produtividade e Clima</p>
+    <p><small>&copy; Alameda Automóveis. Todos os direitos reservados.</small></p>
+    <p><a href="#topo">Voltar ao topo</a></p>
+  </footer>
 
-  <noscript>Este painel precisa de JavaScript para funcionar.</noscript>
-  <script src="js/theme.js" defer></script>
-  <script src="js/todo.js" defer></script>
-  <script src="js/api.js" defer></script>
 </body>
 </html>
-
