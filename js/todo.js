@@ -10,7 +10,6 @@
 //   2. Criar cada <li> dinamicamente, com botões de concluir e de excluir.
 //   3. Salvar as tarefas no localStorage a cada mudança.
 //   4. Ao carregar a página, recuperar as tarefas salvas e mostrá-las.
-
 (function () {
   'use strict';
 
