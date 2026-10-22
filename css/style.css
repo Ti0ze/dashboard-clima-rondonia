@@ -4,14 +4,14 @@
    Ao mudar as cores, confira o contraste: o QA vai testar. */
 
 :root {
-  --bg: #f3f5f1;
+  --bg: #10B981;
   --surface: #ffffff;
-  --text: #17231c;
-  --muted: #55645a;
-  --primary: #232b74;
+  --text: #0F172A;
+  --muted: #64748B;
+  --primary: #0F172A;
   --on-primary: #ffffff;
-  --border: #d3dbd4;
-  --radius: 10px;
+  --border: #E2E8F0;
+  --radius: 15px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -32,9 +32,9 @@ body.dark-mode {
 }
 
 body {
-  margin: 0;
+  margin: 25px 15px 25px 15px;
   font-family: var(--font);
-  line-height: 1.5;
+  line-height: 25px;
   background: var(--bg);
   color: var(--text);
 }
@@ -44,8 +44,8 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
+  gap: 2rem;
+  padding: 1rem 3rem;
 }
 
 .topbar h1 {
@@ -57,7 +57,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1rem;
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 3rem 2rem;
 }
 
 .card {
@@ -86,7 +86,7 @@ select {
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--muted);
-  border-radius: 6px;
+  border-radius: var(--radius);
 }
 
 .btn {
@@ -111,7 +111,7 @@ select {
 }
 
 .footer {
-  padding: 1rem 1.5rem;
+  padding: 1rem 3rem;
   color: var(--muted);
   font-size: 0.875rem;
 }
