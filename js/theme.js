@@ -1,18 +1,37 @@
-// Responsável: Dev UI/UX
-// Objetivo: alternar entre tema claro e escuro.
-//
-// Contrato com o HTML e o CSS:
-//   botão #theme-toggle (use o atributo aria-pressed)
-//   tema escuro = classe "dark-mode" no <body>
-//   localStorage: chave "tema", com os valores "claro" ou "escuro"
-//
-// A fazer:
-//   1. Ao carregar a página, ler "tema" do localStorage e aplicar a classe.
-//   2. Ao clicar no botão, alternar a classe "dark-mode" no <body>.
-//   3. Salvar a escolha no localStorage e atualizar o aria-pressed do botão.
-
 (function () {
   'use strict';
 
-  // seu código aqui
+  var CHAVE = 'tema';
+  var botao = document.getElementById('theme-toggle');
+  if (!botao) return;
+
+  // localStorage pode falhar (modo privado, bloqueio do navegador)
+  function lerTema() {
+    try { return localStorage.getItem(CHAVE); } catch (e) { return null; }
+  }
+  function salvarTema(valor) {
+    try { localStorage.setItem(CHAVE, valor); } catch (e) { /* ignora */ }
+  }
+
+  function aplicarTema(escuro) {
+    document.body.classList.toggle('dark-mode', escuro);
+    botao.setAttribute('aria-pressed', String(escuro));
+  }
+
+  // 1. Ao carregar: usa a escolha salva; se não houver, segue o sistema
+  var salvo = lerTema();
+  if (salvo === 'escuro') {
+    aplicarTema(true);
+  } else if (salvo === 'claro') {
+    aplicarTema(false);
+  } else {
+    aplicarTema(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+
+  // 2 e 3. Ao clicar: alterna, atualiza o aria-pressed e salva
+  botao.addEventListener('click', function () {
+    var escuro = !document.body.classList.contains('dark-mode');
+    aplicarTema(escuro);
+    salvarTema(escuro ? 'escuro' : 'claro');
+  });
 })();

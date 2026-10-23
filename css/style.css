@@ -4,14 +4,14 @@
    Ao mudar as cores, confira o contraste: o QA vai testar. */
 
 :root {
-  --bg: #f3f5f1;
+  --bg: #10B981;
   --surface: #ffffff;
-  --text: #17231c;
-  --muted: #55645a;
-  --primary: #1f6f4a;
+  --text: #0F172A;
+  --muted: #64748B;
+  --primary: #0F172A;
   --on-primary: #ffffff;
-  --border: #d3dbd4;
-  --radius: 10px;
+  --border: #E2E8F0;
+  --radius: 15px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -32,9 +32,9 @@ body.dark-mode {
 }
 
 body {
-  margin: 0;
+  margin: 25px 15px 25px 15px;
   font-family: var(--font);
-  line-height: 1.5;
+  line-height: 25px;
   background: var(--bg);
   color: var(--text);
 }
@@ -44,20 +44,20 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
+  gap: 2rem;
+  padding: 1rem 3rem;
 }
 
-.topbar h1 {
+.topbar h1  {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 3.0rem;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1rem;
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 3rem 2rem;
 }
 
 .card {
@@ -86,7 +86,7 @@ select {
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--muted);
-  border-radius: 6px;
+  border-radius: var(--radius);
 }
 
 .btn {
@@ -111,11 +111,81 @@ select {
 }
 
 .footer {
-  padding: 1rem 1.5rem;
+  padding: 1rem 3rem;
   color: var(--muted);
   font-size: 0.875rem;
 }
 
 .footer p {
   margin: 0.25rem 0;
+}
+/* ===== Botões ===== */
+.btn:hover { filter: brightness(1.1); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+/* ===== Tarefas ===== */
+#task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.task-text { flex: 1; overflow-wrap: anywhere; }
+.task-item.done .task-text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* ===== Clima ===== */
+#weather-status { min-height: 1.5em; color: var(--muted); }
+#weather-status.is-error { color: var(--danger); font-weight: 600; }
+
+#weather-current { margin: 1rem 0; }
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+.weather-metric,
+.forecast-day {
+  padding: 0.75rem;
+  text-align: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.weather-metric strong { display: block; font-size: 1.5rem; }
+#weather-forecast {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 0.5rem;
+}
+
+/* ===== Botão de tema ativo ===== */
+#theme-toggle[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--on-primary); }
+
+/* ===== Acessibilidade ===== */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }
