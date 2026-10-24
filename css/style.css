@@ -1,30 +1,62 @@
-/* Responsável: Dev UI/UX.
-   Ponto de partida: variáveis de cor e fonte, tema escuro e layout em grade.
-   Tema escuro = classe "dark-mode" no body (ativada por js/theme.js).
-   Ao mudar as cores, confira o contraste: o QA vai testar. */
+/* =========================================================
+   Dashboard de Clima de Rondônia
+   Responsável: Dev UI/UX
+   Tema escuro = classe "dark-mode" no body (js/theme.js)
+   Ao mudar cores, confira o contraste nos DOIS temas.
 
+   ÍNDICE
+   1. Variáveis (tema claro)
+   2. Tema escuro
+   3. Reset e base
+   4. Layout (topbar, grid, footer)
+   5. Card
+   6. Formulários
+   7. Botões
+   8. Clima
+   9. Tarefas
+   10. Acessibilidade e movimento
+   ========================================================= */
+
+
+/* 1. VARIÁVEIS (TEMA CLARO) ------------------------------- */
 :root {
-  --bg: #0a5ecc;
+  --bg: #eaf0eb;
   --surface: #ffffff;
-  --text: #0F172A;
-  --muted: #64748B;
-  --primary: #0F172A;
+  --surface-alt: #f2f6f3;
+  --text: #14231b;
+  --muted: #4f6157;
+  --primary: #1f6f4a;
   --on-primary: #ffffff;
-  --border: #E2E8F0;
-  --radius: 15px;
+  --accent: #1b6a8a;          /* azul de rio, para dados do clima */
+  --danger: #b3261e;
+  --border: #cfd9d1;
+  --shadow: 0 1px 2px rgb(20 35 27 / 8%), 0 6px 18px rgb(20 35 27 / 6%);
+  --radius: 14px;
+  --radius-sm: 8px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --container: 1100px;        /* largura máxima do conteúdo */
+  --space: 1rem;
 }
 
+
+/* 2. TEMA ESCURO ------------------------------------------ */
 body.dark-mode {
   --bg: #0f1713;
   --surface: #17221c;
+  --surface-alt: #1e2c24;
   --text: #e6efe9;
   --muted: #9fb2a6;
   --primary: #5fc08a;
   --on-primary: #0a1410;
+  --accent: #6cc3e6;
+  --danger: #ff9a92;
   --border: #2a3a31;
+  --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 6px 18px rgb(0 0 0 / 30%);
 }
 
+
+/* 3. RESET E BASE ----------------------------------------- */
 *,
 *::before,
 *::after {
@@ -32,11 +64,21 @@ body.dark-mode {
 }
 
 body {
-  margin: 25px 15px 25px 15px;
+  margin: 0;
   font-family: var(--font);
-  line-height: 25px;
+  line-height: 1.5;
   background: var(--bg);
   color: var(--text);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+
+/* 4. LAYOUT ----------------------------------------------- */
+.topbar,
+.grid,
+.footer {
+  max-width: var(--container);
+  margin-inline: auto;
 }
 
 .topbar {
@@ -44,74 +86,33 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
-  padding: 1rem 3rem;
+  gap: var(--space);
+  padding: 1.25rem 1.5rem;
 }
 
-.topbar h1  {
+.topbar h1 {
   margin: 0;
   font-size: 1.5rem;
+  letter-spacing: -0.01em;
 }
 
+/* Clima (2/3) + Tarefas (1/3) */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  gap: 1rem;
-  padding: 0 3rem 2rem;
+  grid-template-columns: 2fr 1fr;
+  align-items: start;
+  gap: var(--space);
+  padding: 0 1.5rem 1.5rem;
 }
 
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-}
-
-.card h2 {
-  margin-top: 0;
-  font-size: 1.125rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--muted);
-}
-
-input,
-select {
-  width: 100%;
-  font: inherit;
-  padding: 0.5rem 0.75rem;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--muted);
-  border-radius: var(--radius);
-}
-
-.btn {
-  font: inherit;
-  padding: 0.5rem 1rem;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
-
-#task-form {
-  display: grid;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .footer {
-  padding: 1rem 3rem;
+  padding: 1rem 1.5rem 2rem;
   color: var(--muted);
   font-size: 0.875rem;
 }
@@ -119,73 +120,111 @@ select {
 .footer p {
   margin: 0.25rem 0;
 }
-/* ===== Botões ===== */
-.btn:hover { filter: brightness(1.1); }
-.btn:active { transform: translateY(1px); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.btn-secondary {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--primary);
-}
-.btn-danger {
-  background: transparent;
-  color: var(--danger);
-  border: 1px solid var(--danger);
+.footer a {
+  color: var(--accent);
 }
 
-/* ===== Tarefas ===== */
-#task-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.5rem;
-}
-.task-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
+
+/* 5. CARD -------------------------------------------------- */
+.card {
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.5rem;
 }
-.task-text { flex: 1; overflow-wrap: anywhere; }
-.task-item.done .task-text {
-  text-decoration: line-through;
+
+.card h2 {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+}
+
+
+/* 6. FORMULÁRIOS ------------------------------------------ */
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+input,
+select {
+  width: 100%;
+  font: inherit;
+  padding: 0.55rem 0.75rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--muted);   /* --muted garante contraste da borda */
+  border-radius: var(--radius-sm);
+}
+
+
+/* 7. BOTÕES ----------------------------------------------- */
+.btn {
+  font: inherit;
+  padding: 0.55rem 1rem;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  filter: brightness(0.92);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-small {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.875rem;
+}
+
+.btn-danger {
+  color: var(--danger);
+  background: transparent;
+  border-color: var(--danger);
+}
+
+.btn-danger:hover {
+  filter: none;
+  background: var(--surface-alt);
+}
+
+
+/* 8. CLIMA ------------------------------------------------- */
+#weather-status {
+  margin: 0.75rem 0 0;
   color: var(--muted);
 }
 
-/* ===== Clima ===== */
-#weather-status { min-height: 1.5em; color: var(--muted); }
-#weather-status.is-error { color: var(--danger); font-weight: 600; }
-
-#weather-current { margin: 1rem 0; }
-.weather-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.75rem;
-}
-.weather-metric,
-.forecast-day {
-  padding: 0.75rem;
-  text-align: center;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-.weather-metric strong { display: block; font-size: 1.5rem; }
-#weather-forecast {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 0.5rem;
+#weather-status:empty {
+  display: none;
 }
 
-/* ===== Botão de tema ativo ===== */
-#theme-toggle[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--on-primary); }
+#weather-status.error {
+  color: var(--danger);
+  font-weight: 600;
+}
 
-/* ===== Acessibilidade ===== */
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
+/* Clima atual */
+#weather-current {
+  margin-top: 1rem;
+}
+
+#weather-current:empty,
+#weather-forecast:empty {
+  display: none;
+}
+
+.weather-now {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
