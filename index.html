@@ -3,22 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Dashboard interativo com o clima das cidades de Rondônia e uma lista de tarefas.">
+  <meta name="description" content="Dashboard interativo com o clima das cidades de Rondônia, lista de tarefas, calendário e notas rápidas.">
+  <meta name="theme-color" content="#10B981">
   <title>Dashboard de Clima de Rondônia</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body id="top">
 
   <!--
     CONTRATO DO GRUPO (leia antes de editar)
-    - Cada pessoa mexe só no seu arquivo: css/style.css, js/theme.js, js/todo.js, js/api.js.
+    - Cada pessoa mexe só no seu arquivo: css/style.css, js/theme.js, js/tabs.js, js/todo.js,
+      js/api.js, js/calendar.js, js/notes.js.
     - Precisa de um ID novo ou de mudar este index.html? Combine com o líder antes, para evitar conflito.
     - Os IDs abaixo são o contrato entre HTML, CSS e JS. Não renomeie sem avisar o grupo.
     - Tema escuro = classe "dark-mode" no <body>.
-    - localStorage: chave "tarefas" (lista de tarefas) e chave "tema" (claro ou escuro).
+    - localStorage: "tarefas" (lista de tarefas), "tema" (claro ou escuro), "notas" (notas rápidas),
+      "unidade" (celsius ou fahrenheit) e "aba" (id da última aba aberta).
     - Nomes de arquivo em minúsculas e caminhos relativos, como css/style.css (sem barra no início).
     - Cada arquivo JS fica dentro de uma função (IIFE), para os nomes de variáveis não colidirem.
+
+    ABAS (js/tabs.js)
+    - Botões: .tab dentro de #tablist, com id tab-weather, tab-tasks, tab-calendar e tab-notes.
+    - Painéis: .tab-panel com id weather, tasks, calendar e notes. Cada aba aponta para o painel por aria-controls.
+    - O HTML entrega todos os painéis visíveis. O js/tabs.js esconde os inativos com o atributo hidden.
+      Sem JavaScript, o painel continua utilizável (todos os cards aparecem).
+    - Para o CSS: aba ativa = [aria-selected="true"]. Painel escondido = [hidden] (use display: none).
+
+    CALENDÁRIO (js/calendar.js)
+    - #cal-prev, #cal-next, #cal-today, #cal-title, #cal-body (o JS gera as linhas e células do mês),
+      #cal-selected, #cal-day-tasks, #cal-empty.
+    - O calendário só LÊ a chave "tarefas" do localStorage (campo de data limite). Quem grava é o js/todo.js.
+
+    IDs NOVOS (clima, tarefas, notas e rodapé, v2)
+    CLIMA (js/api.js): #unit-c, #unit-f, #weather-refresh, #weather-updated, #weather-alert, #weather-sun
+    TAREFAS (js/todo.js): #task-priority, #task-date, #task-search, .filter-btn[data-filter],
+      #task-progress, #task-count, #clear-done, #tasks-empty
+    NOTAS (js/notes.js): #notes-input, #notes-status
+    RODAPÉ: #data-source (js/api.js), #team, #repo-link, #pages-link
   -->
+
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
 
   <header class="topbar">
     <h1>Dashboard de Clima de Rondônia</h1>
@@ -26,40 +50,180 @@
     <button id="theme-toggle" class="btn" type="button" aria-pressed="false">Tema escuro</button>
   </header>
 
-  <main class="grid">
+  <main id="main" class="grid">
+
+    <!-- ===== COMO USAR | sem JavaScript ===== -->
+    <details id="how-to" class="card">
+      <summary>Como usar o painel</summary>
+      <ol>
+        <li>Use as abas para trocar entre <strong>Clima</strong>, <strong>Tarefas</strong>, <strong>Calendário</strong> e <strong>Notas</strong>.</li>
+        <li>No Clima, escolha uma cidade de Rondônia, alterne entre °C e °F e use <strong>Atualizar</strong>.</li>
+        <li>Nas Tarefas, defina prioridade e data limite. Use a busca e os filtros para encontrá-las.</li>
+        <li>No Calendário, navegue pelos meses e clique em um dia para ver as tarefas com data limite nele.</li>
+        <li>Nas Notas, escreva lembretes. Tudo fica salvo neste navegador.</li>
+        <li>O botão <strong>Tema escuro</strong> troca as cores do painel.</li>
+      </ol>
+    </details>
+
+    <!-- ===== ABAS | Dono: Dev UI/UX (js/tabs.js) ===== -->
+    <div id="tablist" class="tablist" role="tablist" aria-label="Seções do painel">
+      <button id="tab-weather" class="tab" type="button" role="tab" aria-controls="weather" aria-selected="true">Clima</button>
+      <button id="tab-tasks" class="tab" type="button" role="tab" aria-controls="tasks" aria-selected="false" tabindex="-1">Tarefas</button>
+      <button id="tab-calendar" class="tab" type="button" role="tab" aria-controls="calendar" aria-selected="false" tabindex="-1">Calendário</button>
+      <button id="tab-notes" class="tab" type="button" role="tab" aria-controls="notes" aria-selected="false" tabindex="-1">Notas</button>
+    </div>
 
     <!-- ===== CLIMA | Dono: Dev de API (js/api.js) ===== -->
-    <section id="weather" class="card" aria-labelledby="weather-title">
+    <section id="weather" class="card tab-panel" role="tabpanel" aria-labelledby="tab-weather">
       <h2 id="weather-title">Clima</h2>
+
       <label for="city-select">Cidade</label>
       <select id="city-select"></select>
+
+      <div class="weather-controls">
+        <div role="group" aria-label="Unidade de temperatura">
+          <button id="unit-c" class="btn btn-secondary" type="button" aria-pressed="true">°C</button>
+          <button id="unit-f" class="btn btn-secondary" type="button" aria-pressed="false">°F</button>
+        </div>
+        <button id="weather-refresh" class="btn" type="button">Atualizar</button>
+      </div>
+
+      <!-- Aparece só quando há aviso de chuva ou calor -->
+      <p id="weather-alert" role="alert"></p>
+
       <!-- Mensagens de carregando e de erro -->
       <p id="weather-status" role="status" aria-live="polite"></p>
+
       <!-- Temperatura atual, umidade, vento -->
       <div id="weather-current"></div>
+
+      <!-- Nascer e pôr do sol -->
+      <p id="weather-sun"></p>
+
       <!-- Previsão dos próximos dias -->
       <div id="weather-forecast"></div>
+
+      <small id="weather-updated"></small>
     </section>
 
     <!-- ===== TAREFAS | Dono: Dev To-Do (js/todo.js) ===== -->
-    <section id="tasks" class="card" aria-labelledby="tasks-title">
+    <section id="tasks" class="card tab-panel" role="tabpanel" aria-labelledby="tab-tasks">
       <h2 id="tasks-title">Tarefas</h2>
+
       <form id="task-form">
         <label for="task-input">Nova tarefa</label>
         <input id="task-input" type="text" autocomplete="off" required>
+
+        <label for="task-priority">Prioridade</label>
+        <select id="task-priority">
+          <option value="baixa">Baixa</option>
+          <option value="media" selected>Média</option>
+          <option value="alta">Alta</option>
+        </select>
+
+        <label for="task-date">Data limite</label>
+        <input id="task-date" type="date">
+
         <button class="btn" type="submit">Adicionar tarefa</button>
       </form>
+
+      <label for="task-search">Buscar tarefa</label>
+      <input id="task-search" type="search" autocomplete="off">
+
+      <div class="task-filters" role="group" aria-label="Filtrar tarefas">
+        <button class="btn btn-secondary filter-btn" type="button" data-filter="all" aria-pressed="true">Todas</button>
+        <button class="btn btn-secondary filter-btn" type="button" data-filter="pending" aria-pressed="false">Pendentes</button>
+        <button class="btn btn-secondary filter-btn" type="button" data-filter="done" aria-pressed="false">Concluídas</button>
+      </div>
+
+      <div class="task-summary">
+        <label for="task-progress">Progresso</label>
+        <progress id="task-progress" max="100" value="0">0%</progress>
+        <output id="task-count" for="task-progress" aria-live="polite">0 de 0 tarefas concluídas</output>
+      </div>
+
+      <p id="tasks-empty">Nenhuma tarefa por enquanto.</p>
       <ul id="task-list"></ul>
+
+      <button id="clear-done" class="btn btn-danger" type="button">Limpar concluídas</button>
+    </section>
+
+    <!-- ===== CALENDÁRIO | Dono: definir com o grupo (js/calendar.js) ===== -->
+    <section id="calendar" class="card tab-panel" role="tabpanel" aria-labelledby="tab-calendar">
+      <h2 id="calendar-title">Calendário</h2>
+
+      <div class="cal-nav">
+        <button id="cal-prev" class="btn btn-secondary" type="button" aria-label="Mês anterior">‹</button>
+        <h3 id="cal-title" aria-live="polite"></h3>
+        <button id="cal-next" class="btn btn-secondary" type="button" aria-label="Próximo mês">›</button>
+        <button id="cal-today" class="btn" type="button">Hoje</button>
+      </div>
+
+      <!-- O JS monta as semanas do mês dentro de #cal-body -->
+      <table id="cal-grid" class="cal-grid" aria-labelledby="cal-title">
+        <thead>
+          <tr>
+            <th scope="col"><abbr title="Domingo">Dom</abbr></th>
+            <th scope="col"><abbr title="Segunda-feira">Seg</abbr></th>
+            <th scope="col"><abbr title="Terça-feira">Ter</abbr></th>
+            <th scope="col"><abbr title="Quarta-feira">Qua</abbr></th>
+            <th scope="col"><abbr title="Quinta-feira">Qui</abbr></th>
+            <th scope="col"><abbr title="Sexta-feira">Sex</abbr></th>
+            <th scope="col"><abbr title="Sábado">Sáb</abbr></th>
+          </tr>
+        </thead>
+        <tbody id="cal-body"></tbody>
+      </table>
+
+      <!-- Tarefas com data limite no dia clicado (lidas do localStorage, chave "tarefas") -->
+      <div id="cal-details">
+        <h3 id="cal-selected">Selecione um dia</h3>
+        <ul id="cal-day-tasks"></ul>
+        <p id="cal-empty">Nenhuma tarefa com data limite neste dia.</p>
+      </div>
+    </section>
+
+    <!-- ===== NOTAS RÁPIDAS | Dono: definir com o grupo (js/notes.js) ===== -->
+    <section id="notes" class="card tab-panel" role="tabpanel" aria-labelledby="tab-notes">
+      <h2 id="notes-title">Notas rápidas</h2>
+      <label for="notes-input">Suas anotações</label>
+      <textarea id="notes-input" rows="8" placeholder="Escreva aqui. O texto fica salvo neste navegador."></textarea>
+      <p id="notes-status" role="status" aria-live="polite"></p>
     </section>
 
   </main>
 
-  
+  <footer class="footer">
+    <p id="data-source">Dados do clima: carregando…</p>
+
+    <section id="team" aria-labelledby="team-title">
+      <h2 id="team-title">Equipe</h2>
+      <ul id="team-list">
+        <li>Nome 1 — Arquiteto(a) &amp; Git Master (HTML base)</li>
+        <li>Nome 2 — UI/UX e Estilização (CSS)</li>
+        <li>Nome 3 — Lógica e DOM (Tarefas)</li>
+        <li>Nome 4 — Integração de <abbr title="Interface de Programação de Aplicações">API</abbr> (Clima)</li>
+        <li>Nome 5 — QA, Testes e Documentação</li>
+      </ul>
+    </section>
+
+    <p>
+      <!-- Troque SEU-USUARIO pelo usuário real do GitHub -->
+      <a id="repo-link" href="https://github.com/SEU-USUARIO/dashboard-clima-rondonia" target="_blank" rel="noopener noreferrer">Repositório no GitHub</a>
+      ·
+      <a id="pages-link" href="https://SEU-USUARIO.github.io/dashboard-clima-rondonia/" target="_blank" rel="noopener noreferrer">Versão online (GitHub Pages)</a>
+    </p>
+    <p>Projeto de Programação Client-side · SENAI CEET Sebastião Camargo · Turma de Informática para Internet</p>
+    <p><a href="#top">Voltar ao topo</a></p>
+  </footer>
 
   <noscript>Este painel precisa de JavaScript para funcionar.</noscript>
 
   <script src="js/theme.js" defer></script>
+  <script src="js/tabs.js" defer></script>
   <script src="js/todo.js" defer></script>
   <script src="js/api.js" defer></script>
+  <script src="js/calendar.js" defer></script>
+  <script src="js/notes.js" defer></script>
 </body>
 </html>
