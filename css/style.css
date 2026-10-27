@@ -20,22 +20,22 @@
 
 /* 1. VARIÁVEIS (TEMA CLARO) ------------------------------- */
 :root {
-  --bg: #eaf0eb;
-  --surface: #ffffff;
-  --surface-alt: #f2f6f3;
-  --text: #14231b;
-  --muted: #4f6157;
-  --primary: #1f6f4a;
+  --bg: #302ec550;
+  --surface: #160e0ed5;
+  --surface-alt: #40b8b8;
+  --text: #ffffff;
+  --muted: #53545a;
+  --primary: #267c1e;
   --on-primary: #ffffff;
-  --accent: #1b6a8a;          /* azul de rio, para dados do clima */
+  --accent: #052a91;          
   --danger: #b3261e;
-  --border: #cfd9d1;
-  --shadow: 0 1px 2px rgb(20 35 27 / 8%), 0 6px 18px rgb(20 35 27 / 6%);
+  --border: #f2fcf4;
+  --shadow: 0 1px 2px rgba(16, 201, 102, 0.08), 0 6px 18px rgba(199, 212, 205, 0.06);
   --radius: 14px;
   --radius-sm: 8px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  --container: 1100px;        /* largura máxima do conteúdo */
+  --container: 1100px;      
   --space: 1rem;
 }
 
@@ -64,9 +64,9 @@ body.dark-mode {
 }
 
 body {
-  margin: 0;
+  margin: 1rem;
   font-family: var(--font);
-  line-height: 1.5;
+  line-height: 2.5ch;
   background: var(--bg);
   color: var(--text);
   transition: background-color 0.25s ease, color 0.25s ease;
@@ -87,7 +87,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: var(--space);
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1ch;
 }
 
 .topbar h1 {
@@ -102,7 +102,7 @@ body {
   grid-template-columns: 2fr 1fr;
   align-items: start;
   gap: var(--space);
-  padding: 0 1.5rem 1.5rem;
+  padding: 1rem 1ch;
 }
 
 @media (max-width: 760px) {
@@ -112,7 +112,7 @@ body {
 }
 
 .footer {
-  padding: 1rem 1.5rem 2rem;
+  padding: 1rem 1ch 2rem;
   color: var(--muted);
   font-size: 0.875rem;
 }
@@ -132,7 +132,7 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1ch;
 }
 
 .card h2 {
@@ -164,7 +164,7 @@ select {
 /* 7. BOTÕES ----------------------------------------------- */
 .btn {
   font: inherit;
-  padding: 0.55rem 1rem;
+  padding: 0.55rem 1rem 0.77rem;
   color: var(--on-primary);
   background: var(--primary);
   border: 1px solid transparent;
@@ -182,7 +182,7 @@ select {
 }
 
 .btn-small {
-  padding: 0.3rem 0.65rem;
+  padding: 0.35rem 0.75rem 0.55rem;
   font-size: 0.875rem;
 }
 
@@ -199,6 +199,19 @@ select {
 
 
 /* 8. CLIMA ------------------------------------------------- */
+.weather-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.weather-controls [role="group"] {
+  display: flex;
+  gap: 0.5rem;
+}
+
 #weather-status {
   margin: 0.75rem 0 0;
   color: var(--muted);
