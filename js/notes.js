@@ -1,9 +1,3 @@
-// Responsável: definir com o grupo (Notas rápidas)
-// Objetivo: bloco de notas que salva sozinho no navegador.
-//
-// Contrato com o HTML:
-//   textarea #notes-input e mensagem de estado #notes-status
-//   localStorage: chave "notas" (texto)
 
 (function () {
   'use strict';
@@ -32,21 +26,21 @@
     }
   }
 
-  // Ao carregar: recupera o texto salvo
+
   try {
     campo.value = localStorage.getItem(CHAVE) || '';
   } catch (e) {
     mostrar('O navegador bloqueou o salvamento. As notas não serão guardadas.');
   }
 
-  // Salva depois que a pessoa para de digitar
+
   campo.addEventListener('input', function () {
     mostrar('Salvando...');
     clearTimeout(timer);
     timer = setTimeout(salvar, ATRASO_MS);
   });
 
-  // Se fechar a página no meio da digitação, salva na hora
+
   window.addEventListener('pagehide', function () {
     if (timer !== null) {
       clearTimeout(timer);

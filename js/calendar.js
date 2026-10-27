@@ -1,10 +1,3 @@
-// Responsável: definir com o grupo (Calendário)
-// Objetivo: calendário mensal que mostra as tarefas com data limite em cada dia.
-//
-// Contrato com o HTML:
-//   #cal-prev, #cal-next, #cal-today, #cal-title, #cal-body (este JS gera as semanas)
-//   #cal-selected (título do dia), #cal-day-tasks (lista), #cal-empty (mensagem)
-//   localStorage: só LÊ a chave "tarefas" (campo "data" = "AAAA-MM-DD"). Quem grava é js/todo.js.
 
 (function () {
   'use strict';
@@ -49,7 +42,7 @@
   let mes = agora.getMonth();
   let selecionado = chaveDe(agora);
 
-  // Leitura das tarefas ---------------------------------------------------------------
+
 
   function lerTarefas() {
     try {
@@ -78,7 +71,6 @@
     return el;
   }
 
-  // Desenho do mês ---------------------------------------------------------------------------
 
   function criarDia(dia, hoje, tarefasDoDia, focavel) {
     const k = chave(ano, mes, dia);
@@ -121,7 +113,6 @@
     const hoje = chaveDe(new Date());
     const porDia = agruparPorDia();
 
-    // Só um dia fica na ordem do Tab: o selecionado (ou o dia 1 se ele está em outro mês)
     const selecionadoNoMes = selecionado.slice(0, 7) === chave(ano, mes, 1).slice(0, 7);
     const diaFocavel = selecionadoNoMes ? Number(selecionado.slice(8)) : 1;
 
@@ -142,8 +133,6 @@
       corpo.append(linha);
     }
   }
-
-  // Detalhes do dia selecionado ------------------------------------------------------------------
 
   function desenharDetalhes() {
     if (!tituloDia || !listaDia) return;
@@ -174,8 +163,6 @@
     desenharMes();
     desenharDetalhes();
   }
-
-  // Navegação ---------------------------------------------------------------------------------------
 
   function irParaDia(k) {
     const d = dataDe(k);
@@ -213,7 +200,6 @@
     focarDia(selecionado);
   });
 
-  // Setas movem o dia; PageUp/PageDown trocam o mês
   corpo.addEventListener('keydown', function (evento) {
     const botao = evento.target.closest('.cal-day');
     if (!botao) return;
@@ -236,7 +222,6 @@
     }
   });
 
-  // Atualiza quando as tarefas mudam (todo.js avisa por este evento)
   document.addEventListener('tarefas:atualizadas', render);
   window.addEventListener('storage', function (evento) {
     if (evento.key === CHAVE_TAREFAS) render();

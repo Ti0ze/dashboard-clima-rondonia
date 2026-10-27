@@ -1,22 +1,8 @@
-// Responsável: Dev de integração de API (líder)
-// Objetivo: buscar o clima das cidades de Rondônia em uma API pública e mostrar na tela.
-//
-// API escolhida: Open-Meteo (https://open-meteo.com) - gratuita, sem chave de API.
-//
-// Contrato com o HTML:
-//   seletor de cidade #city-select
-//   unidade: #unit-c e #unit-f (aria-pressed)  |  atualizar: #weather-refresh
-//   mensagens de carregando e de erro em #weather-status (classe "error" nos erros)
-//   aviso de chuva/calor em #weather-alert
-//   dados atuais em #weather-current, nascer/pôr do sol em #weather-sun
-//   previsão em #weather-forecast, hora da última atualização em #weather-updated
-//   crédito da API em #data-source
-//   localStorage: chave "unidade" ("celsius" ou "fahrenheit")
 
 (function () {
   'use strict';
 
-  // Cidades (nome, latitude, longitude) -----------------------------------
+
   const CIDADES = [
     { nome: 'Porto Velho', lat: -8.7612, lon: -63.9004 },
     { nome: 'Ariquemes', lat: -9.9133, lon: -63.0408 },
@@ -34,13 +20,13 @@
   const TEMPO_LIMITE_MS = 10000; // 10 segundos
   const CHAVE_UNIDADE = 'unidade';
 
-  // Limites dos avisos (sempre em °C e %)
+
   const LIMITE_CHUVA = 70;
   const LIMITE_CALOR = 35;
 
-  // Código de clima da Open-Meteo (WMO) -> texto e emoji
+
   const CLIMA = {
-    0: ['Céu limpo', '☀️'],
+    0: ['Céu limpo', ''],
     1: ['Predominantemente limpo', '🌤️'],
     2: ['Parcialmente nublado', '⛅'],
     3: ['Nublado', '☁️'],

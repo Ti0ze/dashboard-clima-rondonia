@@ -1,15 +1,4 @@
-// Responsável: Dev To-Do (lógica e DOM)
-// Objetivo: lista de tarefas que não some ao recarregar a página.
-//
-// Contrato com o HTML:
-//   formulário #task-form, campos #task-input, #task-priority e #task-date, lista #task-list
-//   busca #task-search, filtros .filter-btn[data-filter] (all | pending | done)
-//   resumo: #task-progress, #task-count; mensagem vazia #tasks-empty; botão #clear-done
-//   localStorage: chave "tarefas" (lista de objetos)
-//     { id, texto, concluida, prioridade: "baixa|media|alta", data: "AAAA-MM-DD" ou "" }
-//
-// O calendário (js/calendar.js) lê esta mesma chave e escuta o evento
-// "tarefas:atualizadas", disparado em document a cada mudança.
+
 
 (function () {
   'use strict';
@@ -42,7 +31,6 @@
   let filtro = 'all';
   let busca = '';
 
-  // Armazenamento -------------------------------------------------------------
 
   function normalizar(item) {
     return {
@@ -75,7 +63,6 @@
     document.dispatchEvent(new CustomEvent('tarefas:atualizadas'));
   }
 
-  // Funções auxiliares ------------------------------------------------------------
 
   function novoId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -104,8 +91,7 @@
     return el;
   }
 
-  // Filtro, busca e ordem -----------------------------------------------------------
-
+ 
   function passaNoFiltro(t) {
     if (filtro === 'pending' && t.concluida) return false;
     if (filtro === 'done' && !t.concluida) return false;
@@ -113,7 +99,7 @@
     return true;
   }
 
-  // Pendentes primeiro, depois prioridade, depois data limite
+ 
   function comparar(a, b) {
     return (
       Number(a.concluida) - Number(b.concluida) ||
@@ -122,7 +108,7 @@
     );
   }
 
-  // Desenho na tela -------------------------------------------------------------------
+  
 
   function criarItem(t, hoje) {
     const atrasada = !t.concluida && t.data !== '' && t.data < hoje;
@@ -195,8 +181,7 @@
     }
   }
 
-  // Ações -------------------------------------------------------------------------------
-
+  
   function adicionar(evento) {
     evento.preventDefault();
 
@@ -249,8 +234,7 @@
     render();
   }
 
-  // Eventos ----------------------------------------------------------------------------------
-
+  
   form.addEventListener('submit', adicionar);
 
   lista.addEventListener('change', function (evento) {
@@ -284,7 +268,7 @@
 
   if (botaoLimpar) botaoLimpar.addEventListener('click', limparConcluidas);
 
-  // Se outra aba do navegador mexer nas tarefas, atualiza esta
+  
   window.addEventListener('storage', function (evento) {
     if (evento.key === CHAVE) {
       tarefas = carregar();
