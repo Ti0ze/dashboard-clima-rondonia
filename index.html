@@ -9,22 +9,6 @@
 </head>
 <body>
 
-  <!--
-    CONTRATO DO GRUPO (leia antes de editar)
-    - Cada pessoa mexe só no seu arquivo: css/style.css, js/theme.js, js/todo.js, js/api.js.
-    - Precisa de um ID novo ou de mudar este index.html? Combine com o líder antes, para evitar conflito.
-    - Os IDs abaixo são o contrato entre HTML, CSS e JS. Não renomeie sem avisar o grupo.
-    - Tema escuro = classe "dark-mode" no <body>.
-    - Clima = atributos no <body>, escritos por js/api.js: data-clima (limpo, nublado, chuva, tempestade)
-      e data-periodo (dia, noite). O CSS troca o fundo a partir deles.
-      Para testar sem esperar o tempo mudar, abra a página com ?clima=tempestade&periodo=noite
-    - Gráfico: #chart-box recebe um <svg> com as linhas de máxima e mínima, desenhado por js/api.js (sem biblioteca).
-    - localStorage: chave "tarefas" (lista de tarefas) e chave "tema" (claro ou escuro).
-    - Nomes de arquivo em minúsculas e caminhos relativos, como css/style.css (sem barra no início).
-    - Cada arquivo JS fica dentro de uma função (IIFE), para os nomes de variáveis não colidirem.
-  -->
-
-  <!-- Fundo animado do clima (só decoração). Dono: Dev UI/UX (css/style.css) -->
   <div id="weather-bg" aria-hidden="true">
     <div class="clouds"><i></i><i></i><i></i></div>
     <div class="rain">
@@ -37,47 +21,42 @@
 
   <header class="topbar">
     <h1>Dashboard de Clima de Rondônia</h1>
-    <!-- Dono: Dev UI/UX (js/theme.js). Alterna a classe dark-mode no body. -->
     <button id="theme-toggle" class="btn" type="button" aria-pressed="false">Tema escuro</button>
   </header>
 
   <main class="grid">
 
-    <!-- Coluna da esquerda: o card do clima e, embaixo dele, o card do gráfico -->
     <div class="coluna">
 
-    <!-- ===== CLIMA | Dono: Dev de API (js/api.js) ===== -->
     <section id="weather" class="card" aria-labelledby="weather-title">
       <h2 id="weather-title">Clima</h2>
       <label for="city-select">Cidade</label>
       <select id="city-select"></select>
-      <!-- Mensagens de carregando e de erro -->
+
       <p id="weather-status" role="status" aria-live="polite"></p>
-      <!-- Abas: Hoje | Próximos dias -->
+
       <div class="tabs" role="tablist" aria-label="Período da previsão">
         <button id="tab-hoje" class="tab" role="tab" type="button" aria-selected="true" aria-controls="weather-current">Hoje</button>
         <button id="tab-dias" class="tab" role="tab" type="button" aria-selected="false" aria-controls="weather-forecast" tabindex="-1">Próximos dias</button>
       </div>
-      <!-- Temperatura atual, sensação térmica, chance de chuva -->
+
       <div id="weather-current" role="tabpanel" aria-labelledby="tab-hoje"></div>
       <!-- Previsão dos próximos 7 dias -->
       <div id="weather-forecast" role="tabpanel" aria-labelledby="tab-dias" hidden></div>
     </section>
 
-    <!-- ===== GRÁFICO | Dono: Dev de API (js/api.js) ===== -->
     <section id="chart" class="card" aria-labelledby="chart-title">
       <h2 id="chart-title">Temperatura nos próximos 7 dias</h2>
       <ul class="legenda">
         <li class="max">Máxima</li>
         <li class="min">Mínima</li>
       </ul>
-      <!-- Gráfico de linhas em SVG, desenhado por js/api.js -->
+
       <div id="chart-box"></div>
     </section>
 
     </div>
 
-    <!-- ===== TAREFAS | Dono: Dev To-Do (js/todo.js) ===== -->
     <section id="tasks" class="card" aria-labelledby="tasks-title">
       <h2 id="tasks-title">Tarefas</h2>
       <form id="task-form">
@@ -91,7 +70,7 @@
   </main>
 
   <footer class="footer">
-    <!-- Crédito da API (js/api.js preenche) -->
+
     <p id="data-source"></p>
   </footer>
 

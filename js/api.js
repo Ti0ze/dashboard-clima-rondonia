@@ -1,9 +1,3 @@
-// Responsável: Dev de integração de API (líder)
-// Busca o clima das cidades de Rondônia na Open-Meteo (gratuita e sem chave de API),
-// mostra na tela e avisa o CSS qual é o clima, escrevendo dois atributos no <body>:
-//   data-clima   = limpo | nublado | chuva | tempestade
-//   data-periodo = dia | noite
-// Para testar sem esperar o tempo mudar, abra a página com ?clima=tempestade&periodo=noite
 
 (function () {
   'use strict';
@@ -19,7 +13,6 @@
     { nome: 'Guajará-Mirim', lat: -10.79, lon: -65.34 }
   ];
 
-  // Códigos do tempo (padrão WMO) que a API devolve, em português.
   const DESCRICAO = {
     0: 'Céu limpo', 1: 'Quase limpo', 2: 'Parcialmente nublado', 3: 'Encoberto',
     45: 'Neblina', 48: 'Neblina', 51: 'Garoa fraca', 53: 'Garoa', 55: 'Garoa forte',
@@ -37,14 +30,12 @@
   const elHoje = $('weather-current');
   const elDias = $('weather-forecast');
   const elGrafico = $('chart-box');
-  let pedido = 0; // evita que uma resposta antiga sobrescreva a mais nova
+  let pedido = 0; 
 
   const graus = (n) => Math.round(n) + '°';
   const pct = (n) => (n == null ? '–' : Math.round(n) + '%');
 
-  // ---------- Fundo (contrato com o CSS) ----------
 
-  // Traduz o código do tempo em um dos 4 climas que o CSS conhece.
   function codigoParaClima(codigo) {
     if (codigo <= 2) return 'limpo';                   // 0, 1, 2
     if (codigo >= 95) return 'tempestade';             // 95, 96, 99
@@ -53,7 +44,7 @@
   }
 
   function aplicarFundo(clima, periodo) {
-    // Modo demonstração: ?clima=chuva&periodo=noite vale mais que a API.
+
     const q = new URLSearchParams(location.search);
     const c = q.get('clima');
     const p = q.get('periodo');
@@ -61,7 +52,6 @@
     document.body.dataset.periodo = PERIODOS.includes(p) ? p : periodo;
   }
 
-  // ---------- Busca na API ----------
 
   async function buscarClima(cidade) {
     const params = new URLSearchParams({
@@ -83,7 +73,7 @@
     }
   }
 
-  // ---------- O que aparece na tela ----------
+
 
   function mostrarHoje(dados) {
     const atual = dados.current;
@@ -96,14 +86,14 @@
       '</div>';
   }
 
-  function diaCurto(texto, indice) { // "Hoje", "Ter", "Qua"...
+  function diaCurto(texto, indice) { 
     if (indice === 0) return 'Hoje';
     const data = new Date(texto + 'T00:00:00Z');
     const semana = data.toLocaleDateString('pt-BR', { weekday: 'short', timeZone: 'UTC' }).replace('.', '');
     return semana.charAt(0).toUpperCase() + semana.slice(1);
   }
 
-  function nomeDoDia(texto, indice) { // "Hoje", "Ter 27"...
+  function nomeDoDia(texto, indice) { 
     if (indice === 0) return 'Hoje';
     return diaCurto(texto, indice) + ' ' + new Date(texto + 'T00:00:00Z').getUTCDate();
   }
@@ -122,14 +112,14 @@
       '<tbody>' + linhas + '</tbody></table>';
   }
 
-  // Gráfico de linhas (SVG feito à mão, sem biblioteca): máxima e mínima dos 7 dias.
+
   function desenharGrafico(dados) {
     const d = dados.daily;
     const maxs = d.temperature_2m_max;
     const mins = d.temperature_2m_min;
     if (maxs.length < 2) return;
-    const L = 320, A = 190;                          // tamanho do desenho (viewBox)
-    const esq = 34, dir = 14, topo = 24, base = 28;  // margens
+    const L = 320, A = 190;                          
+    const esq = 34, dir = 14, topo = 24, base = 28; 
     const menor = Math.floor(Math.min(...mins)) - 1;
     const maior = Math.ceil(Math.max(...maxs)) + 1;
     const x = (i) => esq + (i * (L - esq - dir)) / (maxs.length - 1);
@@ -137,7 +127,7 @@
     const ponto = (v, i) => x(i).toFixed(1) + ' ' + y(v).toFixed(1);
     const tracado = (valores) => valores.map((v, i) => (i ? 'L' : 'M') + ponto(v, i)).join(' ');
 
-    // Linhas de grade e números do eixo vertical
+
     const passo = Math.max(1, Math.ceil((maior - menor) / 4));
     let grade = '';
     for (let v = menor; v <= maior; v += passo) {
@@ -201,7 +191,7 @@
     }
   }
 
-  // ---------- Abas (Hoje / Próximos dias) ----------
+
 
   function iniciarAbas() {
     const abas = Array.from(document.querySelectorAll('#weather [role="tab"]'));
@@ -228,7 +218,6 @@
     });
   }
 
-  // ---------- Início ----------
 
   function iniciar() {
     CIDADES.forEach((c, i) => elCidade.add(new Option(c.nome, i)));
@@ -240,7 +229,7 @@
       credito.innerHTML = 'Dados do tempo: <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0)';
     }
 
-    aplicarFundo('nublado', 'dia'); // fundo padrão (e modo demonstração, mesmo sem internet)
+    aplicarFundo('nublado', 'dia'); 
     carregar(CIDADES[0]);
   }
 
