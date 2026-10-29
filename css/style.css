@@ -1,62 +1,54 @@
-/* =========================================================
-   Dashboard de Clima de Rondônia
-   Responsável: Dev UI/UX
-   Tema escuro = classe "dark-mode" no body (js/theme.js)
-   Ao mudar cores, confira o contraste nos DOIS temas.
+/* Responsável: Dev UI/UX.
+   O fundo muda com o clima: js/api.js escreve data-clima e data-periodo no <body>
+   e os blocos "CÉU" abaixo reagem a eles (4 climas x dia/noite = 8 fundos).
+   Tema escuro = classe "dark-mode" no body (js/theme.js): ele só escurece o céu.
+   Os cards são de vidro (transparentes + blur). Ao mudar cores, confira o contraste:
+   o QA vai testar nos 8 fundos. */
 
-   ÍNDICE
-   1. Variáveis (tema claro)
-   2. Tema escuro
-   3. Reset e base
-   4. Layout (topbar, grid, footer)
-   5. Card
-   6. Formulários
-   7. Botões
-   8. Clima
-   9. Tarefas
-   10. Acessibilidade e movimento
-   ========================================================= */
+/* Permitem animar a troca de cor do céu. */
+@property --ceu-1 { syntax: "<color>"; inherits: true; initial-value: #667587; }
+@property --ceu-2 { syntax: "<color>"; inherits: true; initial-value: #8d9bab; }
+@property --ceu-3 { syntax: "<color>"; inherits: true; initial-value: #9eacba; }
+@property --escurecer { syntax: "<number>"; inherits: true; initial-value: 0; }
 
-
-/* 1. VARIÁVEIS (TEMA CLARO) ------------------------------- */
 :root {
-  --bg: #eaf0eb;
-  --surface: #ffffff;
-  --surface-alt: #f2f6f3;
-  --text: #14231b;
-  --muted: #4f6157;
+  --vidro: rgba(10, 22, 38, 0.5);
+  --nuvem: rgba(255, 255, 255, 0.5);
+  --nuvens: 1;
+  --chuva: 0;
+  --astro: none;
+  --text: #ffffff;
+  --muted: #e9f2fb;
   --primary: #1f6f4a;
   --on-primary: #ffffff;
-  --accent: #1b6a8a;          /* azul de rio, para dados do clima */
-  --danger: #b3261e;
-  --border: #cfd9d1;
-  --shadow: 0 1px 2px rgb(20 35 27 / 8%), 0 6px 18px rgb(20 35 27 / 6%);
-  --radius: 14px;
-  --radius-sm: 8px;
+  --border: rgba(255, 255, 255, 0.28);
+  --radius: 16px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-
-  --container: 1100px;        /* largura máxima do conteúdo */
-  --space: 1rem;
 }
 
-
-/* 2. TEMA ESCURO ------------------------------------------ */
-body.dark-mode {
-  --bg: #0f1713;
-  --surface: #17221c;
-  --surface-alt: #1e2c24;
-  --text: #e6efe9;
-  --muted: #9fb2a6;
-  --primary: #5fc08a;
-  --on-primary: #0a1410;
-  --accent: #6cc3e6;
-  --danger: #ff9a92;
-  --border: #2a3a31;
-  --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 6px 18px rgb(0 0 0 / 30%);
+/* ===== CÉU: cores de cada combinação (padrão: nublado de dia) ===== */
+body[data-clima="limpo"][data-periodo="dia"] {
+  --ceu-1: #1e6fd0; --ceu-2: #5aa9ea; --ceu-3: #7fbbe8;
+  --astro: radial-gradient(circle at 80% 17%, #fff6c4 0, #ffe98a 22px, rgba(255, 233, 138, 0.35) 60px, rgba(255, 233, 138, 0) 130px);
 }
+body[data-clima="limpo"][data-periodo="noite"] {
+  --ceu-1: #050b1c; --ceu-2: #0f2147; --ceu-3: #1d3a6b;
+  --astro: radial-gradient(circle at 80% 15%, #f4f6ff 0, #e6ecff 16px, rgba(220, 230, 255, 0.25) 30px, rgba(220, 230, 255, 0) 90px);
+}
+body[data-clima="nublado"][data-periodo="dia"] { --ceu-1: #667587; --ceu-2: #8d9bab; --ceu-3: #9eacba; }
+body[data-clima="nublado"][data-periodo="noite"] { --ceu-1: #10161f; --ceu-2: #1e2733; --ceu-3: #2d3846; }
+body[data-clima="chuva"][data-periodo="dia"] { --ceu-1: #48566a; --ceu-2: #62728a; --ceu-3: #74849a; }
+body[data-clima="chuva"][data-periodo="noite"] { --ceu-1: #0e1624; --ceu-2: #1b2a40; --ceu-3: #2c4058; }
+body[data-clima="tempestade"][data-periodo="dia"] { --ceu-1: #2c3442; --ceu-2: #3d4758; --ceu-3: #4d596c; }
+body[data-clima="tempestade"][data-periodo="noite"] { --ceu-1: #07090f; --ceu-2: #141a2b; --ceu-3: #262a44; }
 
+/* O que muda por período e por clima (vidro, nuvens, gotas) */
+body[data-periodo="noite"] { --vidro: rgba(255, 255, 255, 0.1); --nuvem: rgba(130, 150, 180, 0.35); }
+body[data-clima="limpo"] { --nuvens: 0.6; }
+body[data-clima="chuva"],
+body[data-clima="tempestade"] { --chuva: 1; }
+body.dark-mode { --escurecer: 0.35; }
 
-/* 3. RESET E BASE ----------------------------------------- */
 *,
 *::before,
 *::after {
@@ -65,54 +57,305 @@ body.dark-mode {
 
 body {
   margin: 0;
+  min-height: 100vh;
   font-family: var(--font);
   line-height: 1.5;
-  background: var(--bg);
+  background: var(--ceu-1);
   color: var(--text);
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: --ceu-1 1.2s, --ceu-2 1.2s, --ceu-3 1.2s, --escurecer 0.4s;
 }
 
-
-/* 4. LAYOUT ----------------------------------------------- */
-.topbar,
-.grid,
-.footer {
-  max-width: var(--container);
-  margin-inline: auto;
+/* ===== FUNDO ANIMADO (camadas dentro de #weather-bg) ===== */
+#weather-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--astro), linear-gradient(180deg, var(--ceu-1), var(--ceu-2) 55%, var(--ceu-3));
 }
 
+#weather-bg::after { /* escurece tudo no tema escuro */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, var(--escurecer));
+}
+
+.clouds,
+.rain {
+  position: absolute;
+  inset: 0;
+  transition: opacity 1s;
+}
+
+.clouds { opacity: var(--nuvens); }
+.rain { opacity: var(--chuva); }
+
+.clouds i {
+  position: absolute;
+  left: 0;
+  width: 260px;
+  height: 70px;
+  border-radius: 40px;
+  background: var(--nuvem);
+  filter: blur(14px);
+  animation: drift 46s linear infinite;
+}
+.clouds i:nth-child(1) { top: 8%; width: 320px; height: 80px; }
+.clouds i:nth-child(2) { top: 34%; animation-delay: -14s; animation-duration: 54s; }
+.clouds i:nth-child(3) { top: 62%; width: 300px; animation-delay: -32s; animation-duration: 48s; }
+
+/* Gotas no vidro: círculos com brilho, em blocos de tamanhos diferentes para não parecer repetido */
+.drops {
+  position: absolute;
+  inset: 0;
+  animation: pulse 11s ease-in-out infinite;
+  background:
+    radial-gradient(circle 2px at 29.5px 42px, rgba(255, 255, 255, 0.85) 0, rgba(255, 255, 255, 0) 2px) 0 0 / 113px 131px,
+    radial-gradient(circle 6.5px at 31px 44px, rgba(200, 220, 250, 0.18) 0 4.5px, rgba(238, 246, 255, 0.55) 5.5px, rgba(255, 255, 255, 0) 6.5px) 0 0 / 113px 131px,
+    radial-gradient(circle 1.6px at 95.5px 61.5px, rgba(255, 255, 255, 0.85) 0, rgba(255, 255, 255, 0) 1.6px) 0 0 / 149px 101px,
+    radial-gradient(circle 5.5px at 97px 63px, rgba(200, 220, 250, 0.18) 0 3.5px, rgba(238, 246, 255, 0.55) 4.5px, rgba(255, 255, 255, 0) 5.5px) 0 0 / 149px 101px;
+}
+.drops-big {
+  animation-duration: 15s;
+  animation-delay: -7s;
+  background:
+    radial-gradient(circle 3.5px at 119px 67.5px, rgba(255, 255, 255, 0.85) 0, rgba(255, 255, 255, 0) 3.5px) 0 0 / 181px 157px,
+    radial-gradient(circle 10px at 122px 71px, rgba(200, 220, 250, 0.16) 0 7.5px, rgba(238, 246, 255, 0.55) 9px, rgba(255, 255, 255, 0) 10px) 0 0 / 181px 157px,
+    radial-gradient(circle 4px at 59.5px 124px, rgba(255, 255, 255, 0.85) 0, rgba(255, 255, 255, 0) 4px) 0 0 / 223px 191px,
+    radial-gradient(circle 12px at 63px 128px, rgba(200, 220, 250, 0.16) 0 9px, rgba(238, 246, 255, 0.55) 10.5px, rgba(255, 255, 255, 0) 12px) 0 0 / 223px 191px;
+}
+
+/* Gotas que escorrem (cabeça redonda + rastro fino) */
+.runs i {
+  position: absolute;
+  top: -90px;
+  width: 10px;
+  height: 70px;
+  background:
+    radial-gradient(circle 5px at 5px 65px, rgba(255, 255, 255, 0.85) 0 1.5px, rgba(215, 230, 252, 0.35) 3px, rgba(255, 255, 255, 0) 5px),
+    linear-gradient(to bottom, rgba(215, 230, 252, 0), rgba(215, 230, 252, 0.28));
+  background-size: 10px 70px, 2px 62px;
+  background-position: 0 0, 4px 0;
+  background-repeat: no-repeat;
+  animation: slide 9s ease-in infinite;
+}
+.runs i:nth-child(1) { left: 6%; animation-delay: -3s; }
+.runs i:nth-child(2) { left: 22%; animation-duration: 12s; animation-delay: -9s; }
+.runs i:nth-child(3) { left: 40%; animation-duration: 8s; animation-delay: -1s; }
+.runs i:nth-child(4) { left: 58%; animation-duration: 10.5s; animation-delay: -6s; }
+.runs i:nth-child(5) { left: 76%; animation-duration: 7s; animation-delay: -4s; }
+.runs i:nth-child(6) { left: 92%; animation-duration: 11s; animation-delay: -8s; }
+body[data-clima="tempestade"] .runs i { animation-duration: 6s; }
+
+/* Relâmpago: só na tempestade (dois clarões a cada 7 s, bem abaixo do limite de 3 por segundo) */
+.flash { position: absolute; inset: 0; background: #cfdcff; opacity: 0; }
+body[data-clima="tempestade"] .flash { animation: flash 7s linear infinite; }
+
+@keyframes drift { from { transform: translateX(-340px); } to { transform: translateX(100vw); } }
+@keyframes pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+@keyframes slide { 0% { transform: translateY(0); opacity: 0; } 8% { opacity: 1; } 100% { transform: translateY(110vh); opacity: 0.9; } }
+@keyframes flash { 0%, 90%, 100% { opacity: 0; } 91% { opacity: 0.5; } 92% { opacity: 0; } 94% { opacity: 0.35; } 95% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  #weather-bg * { animation: none !important; }
+  .runs { display: none; }
+  body { transition: none; }
+}
+
+/* ===== LAYOUT ===== */
 .topbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space);
-  padding: 1.25rem 1.5rem;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
 }
 
 .topbar h1 {
   margin: 0;
   font-size: 1.5rem;
-  letter-spacing: -0.01em;
 }
 
-/* Clima (2/3) + Tarefas (1/3) */
 .grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  align-items: start;
-  gap: var(--space);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
   padding: 0 1.5rem 1.5rem;
 }
 
-@media (max-width: 760px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+/* ===== VIDRO ===== */
+.card,
+.footer {
+  background: var(--vidro);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card,
+  .footer { background: rgba(10, 22, 38, 0.85); } /* reserva sem blur */
+}
+
+.card {
+  padding: 1rem 1.25rem;
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.125rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--muted);
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 44px;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 8px;
+}
+
+select option {
+  color: #111111;
+  background: #ffffff;
+}
+
+.btn {
+  min-height: 44px;
+  font: inherit;
+  padding: 0.5rem 1rem;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* ===== CLIMA: abas e dados ===== */
+#weather-status {
+  min-height: 1.5em;
+  margin: 0.5rem 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.375rem;
+  margin: 0.75rem 0;
+}
+
+.tab {
+  flex: 1;
+  min-height: 44px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.temp {
+  margin: 0;
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.descricao {
+  margin: 0.25rem 0 0.75rem;
+}
+
+.stats {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.stat {
+  flex: 1;
+  margin: 0;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.8125rem;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+}
+
+.stat b {
+  display: block;
+  font-size: 1.25rem;
+}
+
+.dias {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.dias th,
+.dias td {
+  padding: 0.25rem;
+  text-align: left;
+  border-top: 1px solid var(--border);
+}
+
+.dias thead th {
+  border-top: 0;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.dias th[scope="row"] { font-weight: 400; }
+.dias th:last-child,
+.dias td:last-child { text-align: right; }
+
+.sr-only { /* só para leitor de tela */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ===== TAREFAS ===== */
+#task-form {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#task-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ===== RODAPÉ ===== */
 .footer {
-  padding: 1rem 1.5rem 2rem;
+  margin: 0 1.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   color: var(--muted);
   font-size: 0.875rem;
 }
@@ -122,109 +365,5 @@ body {
 }
 
 .footer a {
-  color: var(--accent);
-}
-
-
-/* 5. CARD -------------------------------------------------- */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1.25rem 1.5rem;
-}
-
-.card h2 {
-  margin: 0 0 1rem;
-  font-size: 1.125rem;
-}
-
-
-/* 6. FORMULÁRIOS ------------------------------------------ */
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-input,
-select {
-  width: 100%;
-  font: inherit;
-  padding: 0.55rem 0.75rem;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--muted);   /* --muted garante contraste da borda */
-  border-radius: var(--radius-sm);
-}
-
-
-/* 7. BOTÕES ----------------------------------------------- */
-.btn {
-  font: inherit;
-  padding: 0.55rem 1rem;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: filter 0.15s ease, transform 0.1s ease;
-}
-
-.btn:hover {
-  filter: brightness(0.92);
-}
-
-.btn:active {
-  transform: translateY(1px);
-}
-
-.btn-small {
-  padding: 0.3rem 0.65rem;
-  font-size: 0.875rem;
-}
-
-.btn-danger {
-  color: var(--danger);
-  background: transparent;
-  border-color: var(--danger);
-}
-
-.btn-danger:hover {
-  filter: none;
-  background: var(--surface-alt);
-}
-
-
-/* 8. CLIMA ------------------------------------------------- */
-#weather-status {
-  margin: 0.75rem 0 0;
-  color: var(--muted);
-}
-
-#weather-status:empty {
-  display: none;
-}
-
-#weather-status.error {
-  color: var(--danger);
-  font-weight: 600;
-}
-
-/* Clima atual */
-#weather-current {
-  margin-top: 1rem;
-}
-
-#weather-current:empty,
-#weather-forecast:empty {
-  display: none;
-}
-
-.weather-now {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  color: inherit;
 }
