@@ -23,6 +23,8 @@
   --on-primary: #ffffff;
   --border: rgba(255, 255, 255, 0.28);
   --radius: 16px;
+  --grafico-max: #ffc266;
+  --grafico-min: #9fd8ff;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -183,6 +185,7 @@ body[data-clima="tempestade"] .flash { animation: flash 7s linear infinite; }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1rem;
+  align-items: start;
   padding: 0 1.5rem 1.5rem;
 }
 
@@ -338,6 +341,45 @@ select option {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* ===== GRÁFICO (SVG desenhado por js/api.js) ===== */
+.coluna { /* clima em cima, gráfico embaixo */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.legenda {
+  display: flex;
+  gap: 1rem;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+}
+
+.legenda li::before { /* amostra da linha: cheia = máxima, tracejada = mínima */
+  content: "";
+  display: inline-block;
+  width: 22px;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+  border-top: 3px solid;
+}
+.legenda .max::before { border-color: var(--grafico-max); }
+.legenda .min::before { border-color: var(--grafico-min); border-top-style: dashed; }
+
+.grafico { display: block; width: 100%; height: auto; }
+.grafico text { fill: var(--text); font-size: 11px; }
+.grafico .eixo { fill: var(--muted); font-size: 10px; }
+.grafico .grade { stroke: rgba(255, 255, 255, 0.2); }
+.grafico .faixa { fill: rgba(255, 255, 255, 0.1); }
+.grafico .linha-max,
+.grafico .linha-min { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.grafico .linha-max { stroke: var(--grafico-max); }
+.grafico .linha-min { stroke: var(--grafico-min); stroke-dasharray: 6 4; }
+.grafico .ponto-max { fill: var(--grafico-max); }
+.grafico .ponto-min { fill: var(--grafico-min); }
 
 /* ===== TAREFAS ===== */
 #task-form {

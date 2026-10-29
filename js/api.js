@@ -36,6 +36,7 @@
   const elStatus = $('weather-status');
   const elHoje = $('weather-current');
   const elDias = $('weather-forecast');
+  const elGrafico = $('chart-box');
   let pedido = 0; // evita que uma resposta antiga sobrescreva a mais nova
 
   const graus = (n) => Math.round(n) + '°';
@@ -95,11 +96,16 @@
       '</div>';
   }
 
-  function nomeDoDia(texto, indice) {
+  function diaCurto(texto, indice) { // "Hoje", "Ter", "Qua"...
     if (indice === 0) return 'Hoje';
     const data = new Date(texto + 'T00:00:00Z');
     const semana = data.toLocaleDateString('pt-BR', { weekday: 'short', timeZone: 'UTC' }).replace('.', '');
-    return semana.charAt(0).toUpperCase() + semana.slice(1) + ' ' + data.getUTCDate();
+    return semana.charAt(0).toUpperCase() + semana.slice(1);
+  }
+
+  function nomeDoDia(texto, indice) { // "Hoje", "Ter 27"...
+    if (indice === 0) return 'Hoje';
+    return diaCurto(texto, indice) + ' ' + new Date(texto + 'T00:00:00Z').getUTCDate();
   }
 
   function mostrarPrevisao(dados) {
@@ -116,9 +122,58 @@
       '<tbody>' + linhas + '</tbody></table>';
   }
 
+  // Gráfico de linhas (SVG feito à mão, sem biblioteca): máxima e mínima dos 7 dias.
+  function desenharGrafico(dados) {
+    const d = dados.daily;
+    const maxs = d.temperature_2m_max;
+    const mins = d.temperature_2m_min;
+    if (maxs.length < 2) return;
+    const L = 320, A = 190;                          // tamanho do desenho (viewBox)
+    const esq = 34, dir = 14, topo = 24, base = 28;  // margens
+    const menor = Math.floor(Math.min(...mins)) - 1;
+    const maior = Math.ceil(Math.max(...maxs)) + 1;
+    const x = (i) => esq + (i * (L - esq - dir)) / (maxs.length - 1);
+    const y = (v) => topo + ((maior - v) * (A - topo - base)) / (maior - menor);
+    const ponto = (v, i) => x(i).toFixed(1) + ' ' + y(v).toFixed(1);
+    const tracado = (valores) => valores.map((v, i) => (i ? 'L' : 'M') + ponto(v, i)).join(' ');
+
+    // Linhas de grade e números do eixo vertical
+    const passo = Math.max(1, Math.ceil((maior - menor) / 4));
+    let grade = '';
+    for (let v = menor; v <= maior; v += passo) {
+      grade += '<line class="grade" x1="' + esq + '" x2="' + (L - dir) + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) + '"/>' +
+        '<text class="eixo" x="' + (esq - 6) + '" y="' + (y(v) + 3.5).toFixed(1) + '" text-anchor="end">' + v + '°</text>';
+    }
+
+    const bolinhas = (valores, classe) => valores.map((v, i) =>
+      '<circle class="' + classe + '" cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="3.5"/>'
+    ).join('');
+    const rotulos = (valores, acima) => valores.map((v, i) =>
+      '<text x="' + x(i).toFixed(1) + '" y="' + (y(v) + (acima ? -8 : 16)).toFixed(1) + '" text-anchor="middle">' + graus(v) + '</text>'
+    ).join('');
+    const dias = d.time.map((dia, i) =>
+      '<text class="eixo" x="' + x(i).toFixed(1) + '" y="' + (A - 8) + '" text-anchor="middle">' + diaCurto(dia, i) + '</text>'
+    ).join('');
+
+    // Faixa entre a mínima e a máxima + texto para leitor de tela
+    const faixa = tracado(maxs) + ' ' + mins.map((v, i) => 'L' + ponto(v, i)).reverse().join(' ') + ' Z';
+    const resumo = d.time.map((dia, i) => diaCurto(dia, i) + ' ' + graus(maxs[i]) + ' e ' + graus(mins[i])).join(', ');
+
+    elGrafico.innerHTML =
+      '<svg class="grafico" viewBox="0 0 ' + L + ' ' + A + '" role="img" aria-label="Temperatura máxima e mínima: ' + resumo + '">' +
+        grade +
+        '<path class="faixa" d="' + faixa + '"/>' +
+        '<path class="linha-max" d="' + tracado(maxs) + '"/>' +
+        '<path class="linha-min" d="' + tracado(mins) + '"/>' +
+        bolinhas(maxs, 'ponto-max') + bolinhas(mins, 'ponto-min') +
+        rotulos(maxs, true) + rotulos(mins, false) + dias +
+      '</svg>';
+  }
+
   function mostrarErro(cidade) {
     elHoje.textContent = '';
     elDias.textContent = '';
+    elGrafico.textContent = '';
     elStatus.textContent = 'Não foi possível carregar o clima de ' + cidade.nome + '. Verifique a internet. ';
     const botao = document.createElement('button');
     botao.type = 'button';
@@ -136,6 +191,7 @@
       if (meu !== pedido) return; // a pessoa já escolheu outra cidade
       mostrarHoje(dados);
       mostrarPrevisao(dados);
+      desenharGrafico(dados);
       aplicarFundo(codigoParaClima(dados.current.weather_code), dados.current.is_day ? 'dia' : 'noite');
       elStatus.textContent = '';
     } catch (erro) {

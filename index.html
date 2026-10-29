@@ -18,6 +18,7 @@
     - Clima = atributos no <body>, escritos por js/api.js: data-clima (limpo, nublado, chuva, tempestade)
       e data-periodo (dia, noite). O CSS troca o fundo a partir deles.
       Para testar sem esperar o tempo mudar, abra a página com ?clima=tempestade&periodo=noite
+    - Gráfico: #chart-box recebe um <svg> com as linhas de máxima e mínima, desenhado por js/api.js (sem biblioteca).
     - localStorage: chave "tarefas" (lista de tarefas) e chave "tema" (claro ou escuro).
     - Nomes de arquivo em minúsculas e caminhos relativos, como css/style.css (sem barra no início).
     - Cada arquivo JS fica dentro de uma função (IIFE), para os nomes de variáveis não colidirem.
@@ -42,6 +43,9 @@
 
   <main class="grid">
 
+    <!-- Coluna da esquerda: o card do clima e, embaixo dele, o card do gráfico -->
+    <div class="coluna">
+
     <!-- ===== CLIMA | Dono: Dev de API (js/api.js) ===== -->
     <section id="weather" class="card" aria-labelledby="weather-title">
       <h2 id="weather-title">Clima</h2>
@@ -59,6 +63,19 @@
       <!-- Previsão dos próximos 7 dias -->
       <div id="weather-forecast" role="tabpanel" aria-labelledby="tab-dias" hidden></div>
     </section>
+
+    <!-- ===== GRÁFICO | Dono: Dev de API (js/api.js) ===== -->
+    <section id="chart" class="card" aria-labelledby="chart-title">
+      <h2 id="chart-title">Temperatura nos próximos 7 dias</h2>
+      <ul class="legenda">
+        <li class="max">Máxima</li>
+        <li class="min">Mínima</li>
+      </ul>
+      <!-- Gráfico de linhas em SVG, desenhado por js/api.js -->
+      <div id="chart-box"></div>
+    </section>
+
+    </div>
 
     <!-- ===== TAREFAS | Dono: Dev To-Do (js/todo.js) ===== -->
     <section id="tasks" class="card" aria-labelledby="tasks-title">
