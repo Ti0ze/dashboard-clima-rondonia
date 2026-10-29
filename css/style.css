@@ -350,7 +350,7 @@ select option {
   font-size: 0.8125rem;
 }
 
-.legenda li::before { /* amostra da linha: cheia = máxima, tracejada = mínima */
+.legenda li::before { 
   content: "";
   display: inline-block;
   width: 22px;
@@ -373,7 +373,7 @@ select option {
 .grafico .ponto-max { fill: var(--grafico-max); }
 .grafico .ponto-min { fill: var(--grafico-min); }
 
-/* ===== TAREFAS ===== */
+
 #task-form {
   display: grid;
   gap: 0.5rem;
@@ -386,7 +386,7 @@ select option {
   list-style: none;
 }
 
-/* ===== RODAPÉ ===== */
+
 .footer {
   margin: 0 1.5rem 1.5rem;
   padding: 0.5rem 1rem;
