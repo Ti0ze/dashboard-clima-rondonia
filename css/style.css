@@ -1,4 +1,6 @@
 
+
+/* Permitem animar a troca de cor do céu. */
 @property --ceu-1 { syntax: "<color>"; inherits: true; initial-value: #667587; }
 @property --ceu-2 { syntax: "<color>"; inherits: true; initial-value: #8d9bab; }
 @property --ceu-3 { syntax: "<color>"; inherits: true; initial-value: #9eacba; }
@@ -332,7 +334,8 @@ select option {
   white-space: nowrap;
 }
 
-.coluna 
+
+.coluna { 
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -347,7 +350,7 @@ select option {
   font-size: 0.8125rem;
 }
 
-.legenda li::before { 
+.legenda li::before { /* amostra da linha: cheia = máxima, tracejada = mínima */
   content: "";
   display: inline-block;
   width: 22px;
@@ -370,7 +373,7 @@ select option {
 .grafico .ponto-max { fill: var(--grafico-max); }
 .grafico .ponto-min { fill: var(--grafico-min); }
 
-
+/* ===== TAREFAS ===== */
 #task-form {
   display: grid;
   gap: 0.5rem;
@@ -383,7 +386,7 @@ select option {
   list-style: none;
 }
 
-
+/* ===== RODAPÉ ===== */
 .footer {
   margin: 0 1.5rem 1.5rem;
   padding: 0.5rem 1rem;
