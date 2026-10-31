@@ -71,6 +71,14 @@
     return el;
   }
 
+  // Soma meses sem estourar o dia: 31/01 + 1 mês = 28/02 (e não 03/03)
+  function somarMeses(data, delta) {
+    const alvo = new Date(data.getFullYear(), data.getMonth() + delta, 1);
+    const ultimoDia = new Date(alvo.getFullYear(), alvo.getMonth() + 1, 0).getDate();
+    alvo.setDate(Math.min(data.getDate(), ultimoDia));
+    return alvo;
+  }
+
 
   function criarDia(dia, hoje, tarefasDoDia, focavel) {
     const k = chave(ano, mes, dia);
@@ -204,15 +212,15 @@
     const botao = evento.target.closest('.cal-day');
     if (!botao) return;
 
-    const d = dataDe(botao.dataset.date);
+    let d = dataDe(botao.dataset.date);
     let mudou = true;
 
     if (evento.key === 'ArrowLeft') d.setDate(d.getDate() - 1);
     else if (evento.key === 'ArrowRight') d.setDate(d.getDate() + 1);
     else if (evento.key === 'ArrowUp') d.setDate(d.getDate() - 7);
     else if (evento.key === 'ArrowDown') d.setDate(d.getDate() + 7);
-    else if (evento.key === 'PageUp') d.setMonth(d.getMonth() - 1);
-    else if (evento.key === 'PageDown') d.setMonth(d.getMonth() + 1);
+    else if (evento.key === 'PageUp') d = somarMeses(d, -1);
+    else if (evento.key === 'PageDown') d = somarMeses(d, 1);
     else mudou = false;
 
     if (mudou) {

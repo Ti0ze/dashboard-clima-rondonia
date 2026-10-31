@@ -35,7 +35,7 @@
 
       <p id="weather-status" role="status" aria-live="polite"></p>
 
-      <div class="tabs" role="tablist" aria-label="Período da previsão">
+      <div id="tablist" class="tabs" role="tablist" aria-label="Período da previsão">
         <button id="tab-hoje" class="tab" role="tab" type="button" aria-selected="true" aria-controls="weather-current">Hoje</button>
         <button id="tab-dias" class="tab" role="tab" type="button" aria-selected="false" aria-controls="weather-forecast" tabindex="-1">Próximos dias</button>
       </div>
@@ -57,15 +57,84 @@
 
     </div>
 
+    <div class="coluna">
+
     <section id="tasks" class="card" aria-labelledby="tasks-title">
       <h2 id="tasks-title">Tarefas</h2>
       <form id="task-form">
         <label for="task-input">Nova tarefa</label>
         <input id="task-input" type="text" autocomplete="off" required>
+        <div class="linha-campos">
+          <div>
+            <label for="task-priority">Prioridade</label>
+            <select id="task-priority">
+              <option value="alta">Alta</option>
+              <option value="media" selected>Média</option>
+              <option value="baixa">Baixa</option>
+            </select>
+          </div>
+          <div>
+            <label for="task-date">Prazo</label>
+            <input id="task-date" type="date">
+          </div>
+        </div>
         <button class="btn" type="submit">Adicionar tarefa</button>
       </form>
+
+      <label for="task-search">Buscar tarefa</label>
+      <input id="task-search" type="search" autocomplete="off">
+
+      <div class="filtros" role="group" aria-label="Filtrar tarefas">
+        <button class="btn filter-btn" type="button" data-filter="all" aria-pressed="true">Todas</button>
+        <button class="btn filter-btn" type="button" data-filter="pending" aria-pressed="false">Pendentes</button>
+        <button class="btn filter-btn" type="button" data-filter="done" aria-pressed="false">Concluídas</button>
+      </div>
+
+      <p id="task-count" role="status" aria-live="polite"></p>
+      <progress id="task-progress" max="100" value="0" aria-label="Progresso das tarefas">0%</progress>
+
       <ul id="task-list"></ul>
+      <p id="tasks-empty" hidden></p>
+      <button id="clear-done" class="btn btn-danger" type="button" disabled>Limpar concluídas</button>
     </section>
+
+    <section id="calendar" class="card" aria-labelledby="calendar-title">
+      <h2 id="calendar-title">Calendário</h2>
+      <div class="cal-nav">
+        <button id="cal-prev" class="btn" type="button" aria-label="Mês anterior">&lsaquo;</button>
+        <h3 id="cal-title" aria-live="polite"></h3>
+        <button id="cal-next" class="btn" type="button" aria-label="Próximo mês">&rsaquo;</button>
+      </div>
+      <button id="cal-today" class="btn btn-small" type="button">Ir para hoje</button>
+
+      <table class="cal" aria-labelledby="cal-title">
+        <thead>
+          <tr>
+            <th scope="col"><abbr title="Domingo">Dom</abbr></th>
+            <th scope="col"><abbr title="Segunda-feira">Seg</abbr></th>
+            <th scope="col"><abbr title="Terça-feira">Ter</abbr></th>
+            <th scope="col"><abbr title="Quarta-feira">Qua</abbr></th>
+            <th scope="col"><abbr title="Quinta-feira">Qui</abbr></th>
+            <th scope="col"><abbr title="Sexta-feira">Sex</abbr></th>
+            <th scope="col"><abbr title="Sábado">Sáb</abbr></th>
+          </tr>
+        </thead>
+        <tbody id="cal-body"></tbody>
+      </table>
+
+      <h3 id="cal-selected"></h3>
+      <ul id="cal-day-tasks"></ul>
+      <p id="cal-empty">Nenhuma tarefa com prazo neste dia.</p>
+    </section>
+
+    <section id="notes" class="card" aria-labelledby="notes-title">
+      <h2 id="notes-title">Anotações</h2>
+      <label for="notes-input">Suas notas (salvas automaticamente neste navegador)</label>
+      <textarea id="notes-input" rows="6"></textarea>
+      <p id="notes-status" role="status" aria-live="polite"></p>
+    </section>
+
+    </div>
 
   </main>
 
@@ -77,7 +146,10 @@
   <noscript>Este painel precisa de JavaScript para funcionar.</noscript>
 
   <script src="js/theme.js" defer></script>
+  <script src="js/tabs.js" defer></script>
   <script src="js/todo.js" defer></script>
+  <script src="js/notes.js" defer></script>
+  <script src="js/calendar.js" defer></script>
   <script src="js/api.js" defer></script>
 </body>
 </html>

@@ -1,2 +1,2 @@
 # dashboard-clima-rondonia
-Deshboard de clima
+Dashboard de clima

@@ -193,36 +193,9 @@
 
 
 
-  function iniciarAbas() {
-    const abas = Array.from(document.querySelectorAll('#weather [role="tab"]'));
-
-    function ativar(aba) {
-      abas.forEach((a) => {
-        const ativa = a === aba;
-        a.setAttribute('aria-selected', String(ativa));
-        a.tabIndex = ativa ? 0 : -1;
-        $(a.getAttribute('aria-controls')).hidden = !ativa;
-      });
-    }
-
-    abas.forEach((aba, i) => {
-      aba.addEventListener('click', () => ativar(aba));
-      aba.addEventListener('keydown', (e) => { // setas, Home e End trocam de aba
-        const destino = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: abas.length - 1 }[e.key];
-        if (destino === undefined) return;
-        e.preventDefault();
-        const alvo = abas[(destino + abas.length) % abas.length];
-        ativar(alvo);
-        alvo.focus();
-      });
-    });
-  }
-
-
   function iniciar() {
     CIDADES.forEach((c, i) => elCidade.add(new Option(c.nome, i)));
     elCidade.addEventListener('change', () => carregar(CIDADES[elCidade.value]));
-    iniciarAbas();
 
     const credito = $('data-source');
     if (credito) {

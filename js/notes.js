@@ -12,7 +12,7 @@
   let timer = null;
 
   function mostrar(mensagem) {
-    if (status) status.textContent = mensagem;
+    if (status && status.textContent !== mensagem) status.textContent = mensagem;
   }
 
   function salvar() {

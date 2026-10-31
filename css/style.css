@@ -211,8 +211,9 @@ label {
   color: var(--muted);
 }
 
-input,
-select {
+input:not([type="checkbox"]),
+select,
+textarea {
   width: 100%;
   min-height: 44px;
   font: inherit;
@@ -374,10 +375,48 @@ select option {
 .grafico .ponto-min { fill: var(--grafico-min); }
 
 
+/* ===== TAREFAS ===== */
 #task-form {
   display: grid;
   gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.linha-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-danger { background: #a3392b; }
+.btn-small { padding: 0.25rem 0.75rem; font-size: 0.875rem; }
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0.75rem 0;
+}
+
+.filter-btn[aria-pressed="false"] { background: rgba(255, 255, 255, 0.14); }
+
+#task-count {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+#task-progress {
+  display: block;
+  width: 100%;
+  height: 10px;
+  margin-bottom: 0.75rem;
+  accent-color: #7fe0a8;
 }
 
 #task-list {
@@ -385,6 +424,123 @@ select option {
   padding: 0;
   list-style: none;
 }
+
+.task-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.task-check {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.task-text {
+  flex: 1 1 8rem;
+  margin: 0;
+  padding: 0.5rem 0;
+  color: var(--text);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.task-item.done .task-text { text-decoration: line-through; opacity: 0.7; }
+
+.task-badge {
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.prioridade-alta { background: rgba(255, 120, 100, 0.35); }
+.prioridade-media { background: rgba(255, 194, 102, 0.3); }
+.prioridade-baixa { background: rgba(127, 224, 168, 0.3); }
+
+.task-due { font-size: 0.8125rem; color: var(--muted); }
+.task-item.atrasada .task-due { color: #ffb4a8; font-weight: 600; }
+
+#tasks-empty { margin: 0.5rem 0; color: var(--muted); }
+#clear-done { margin-top: 0.75rem; }
+
+/* ===== CALENDÁRIO ===== */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cal-nav h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.cal-nav .btn { min-width: 44px; }
+#cal-today { margin-bottom: 0.5rem; }
+
+.cal {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.cal th {
+  padding: 0.25rem 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+  text-align: center;
+}
+.cal th abbr { text-decoration: none; }
+.cal td { padding: 2px; text-align: center; }
+
+.cal-day {
+  position: relative;
+  width: 100%;
+  min-height: 44px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.cal-day:hover { background: rgba(255, 255, 255, 0.14); }
+.cal-day.today { border-color: rgba(255, 255, 255, 0.6); }
+.cal-day.selected { font-weight: 700; background: rgba(255, 255, 255, 0.28); border-color: #ffffff; }
+
+.cal-dot {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  min-width: 1.1rem;
+  padding: 0 0.25rem;
+  font-size: 0.6875rem;
+  line-height: 1.1rem;
+  color: #0b1a2b;
+  background: var(--grafico-max);
+  border-radius: 999px;
+}
+
+#cal-selected { margin: 1rem 0 0.5rem; font-size: 1rem; }
+#cal-day-tasks { margin: 0; padding-left: 1.25rem; }
+.cal-task.done .cal-task-text { text-decoration: line-through; opacity: 0.7; }
+.cal-task-meta { font-size: 0.8125rem; color: var(--muted); }
+#cal-empty { margin: 0; color: var(--muted); }
+
+/* ===== NOTAS ===== */
+#notes-input { line-height: 1.4; resize: vertical; }
+#notes-status { min-height: 1.5em; margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--muted); }
 
 
 .footer {
